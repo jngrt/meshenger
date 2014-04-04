@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket, os, time, select, urllib, sys
+import socket, os, time, select, urllib, sys, threading 
 
 class Meshenger:
   devices = [] #the list of all the nodes this this node has seen
@@ -8,6 +8,7 @@ class Meshenger:
   announce_port = 13337
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
+  exitapp = False #to kill all threads on
 
 
   def __init__(self):
@@ -16,11 +17,24 @@ class Meshenger:
     self.own_ip = self.get_ip_adress()
     #self.own_ip = "192.168.2.196"
 
-    while True:
 
-      print 'discovering devices'
-      time.sleep(1)
-      self.discover()
+    try:
+      #print 'discovering devices'
+      d = threading.Thread(target=self.discover)
+      d.daemon = True
+      d.start()
+
+      a = threading.Thread(target=self.announce)
+      a.daemon = True
+      a.start()
+
+    except (KeyboardInterrupt, SystemExit):
+      print 'exiting discovery thread'
+      d.join()
+      a.join()
+      sys.exit()
+
+    while True:
 
       if len(self.devices) > 0:
         print 'found', len(self.devices),'device(s) retreiving indices'
@@ -33,18 +47,19 @@ class Meshenger:
           print 'updating own index'
           self.build_index()
           
-      time.sleep(5)
-
+      time.sleep(5) #free process or ctrl+c
+ 
 
   def announce(self):
     """
     Announce the node's existance to other nodes
     """
-
-    #announces it's existance to other nodes
-    sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    sock.sendto(bericht, ("ff02::1", self.announce_port))
-    sock.close()
+    while not self.exitapp:
+      print 'announcing'
+      sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+      sock.sendto('bericht', ("ff02::1", self.announce_port))
+      sock.close()
+      time.sleep(5)
 
   def discover(self):
     """
@@ -59,7 +74,8 @@ class Meshenger:
 
     #global devices
 
-    while True:
+    while not self.exitapp:
+      print 'discovering'
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       if result[1][0] not in self.devices and result[1][0] != self.own_ip:
         self.devices.append(result[1][0])
@@ -67,6 +83,15 @@ class Meshenger:
       time.sleep(1)
 
   def serve(self):
+
+    # try:
+    #   t = threading.Thread(target=BorderCheckWebserver, args=(self, ))
+    #   t.daemon = True
+    #   t.start()
+    #   time.sleep(2)
+    # except (KeyboardInterrupt, SystemExit):
+    #   t.join()
+    #   sys.exit()
 
     a = ''
     # serves both the index and the messages on the node over http
@@ -143,5 +168,9 @@ class Meshenger:
 
 
 if __name__ == "__main__":
-  print "test"
-  meshenger = Meshenger()
+  print "test"  
+  try:
+    meshenger = Meshenger()
+  except (KeyboardInterrupt, SystemExit):
+    exitapp = True
+    raise
