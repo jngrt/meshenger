@@ -23,34 +23,34 @@ class Meshenger:
       self.discover()
 
       if len(self.devices) > 0:
-      print 'found', len(self.devices),'device(s) retreiving indices'
-      for device in self.devices:
-        nodepath = ip_to_hash(device)
+        print 'found', len(self.devices),'device(s) retreiving indices'
+        for device in self.devices:
+          nodepath = self.ip_to_hash(device)
 
-        self.get_index(device, nodepath)
+          self.get_index(device, nodepath)
 
-        self.get_messages(device, nodepath)
-        print 'updating own index'
-        self.build_index()
-        
+          self.get_messages(device, nodepath)
+          print 'updating own index'
+          self.build_index()
+          
       time.sleep(5)
 
 
   def announce(self):
+    """
+    Announce the node's existance to other nodes
+    """
 
     #announces it's existance to other nodes
     sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.sendto(bericht, ("ff02::1", self.announce_port))
     sock.close()
 
-  def index(self):
-
-    a = ''
-    # builds the latest index of all the messages that are on this node
-
   def discover(self):
+    """
+    Discover other devices by listening to the Meshenger announce port
+    """
 
-    # discovers other nodes by listening to the Meshenger announce port
     bufferSize = 1024 # whatever you need
 
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -61,7 +61,7 @@ class Meshenger:
 
     while True:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
-      if result not in self.devices and result[1][0] != self.own_ip:
+      if result[1][0] not in self.devices and result[1][0] != self.own_ip:
         self.devices.append(result[1][0])
         return
       time.sleep(1)
@@ -73,13 +73,17 @@ class Meshenger:
     # plus manages the client-side web interface
 
   def build_index(self):
+    """
+    Make an index file of all the messages present on the node.
+    Save the time of the last update.
+    """
     previous_index = []
 
-    current_index = os.listdir(msg_dir)
+    current_index = os.listdir(self.msg_dir)
 
     if current_index != previous_index:
       with open('index', 'wb') as index:
-        for message in os.listdir(msg_dir):
+        for message in os.listdir(self.msg_dir):
           index.write(message)
           index.write('\n')
       with open('index_last_update', 'wb') as indexupdate:
@@ -87,37 +91,31 @@ class Meshenger:
       current_index = previous_index
 
   def get_index(self,ip, path):
+    """
+    Download the indices from other nodes.
+    """
 
     os.system('wget http://['+ip+'%adhoc0]:13338/index -O '+os.path.join(path,'index'))
 
-    # downloads the index from other nodes and then proceeds to downloads messages it doesn't have already
 
   def get_messages(self, ip, path):
+    """
+    Get new messages from other node based on it's index file
+    """
 
     with open(os.path.join(path,'index')) as index:
       index = index.read().split('\n')
       for message in index:
-        messagepath = os.path.join(os.path.abspath(msg_dir), message)
+        messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
         if not os.path.exists(messagepath):
           print 'downloading', message, 'to', messagepath
           os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
 
 
-    # s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-
-    # s.connect(('http://[fe80::6666:b3ff:feeb:68c2%adhoc0]/lijst', 13338))
-
-    # s.send("GET / HTTP/1.0\r\n\r\n")
-
-    # while 1:
-    #   buf = s.recv(1000)
-    #   if not buf:
-    #       break
-    #   sys.stdout.write(buf)
-
-    # s.close()
-
   def ip_to_hash(self, ip):
+    """
+    Convert a node's ip into a hash and make a directory to store it's files
+    """
     import hashlib
     hasj = hashlib.md5(ip).hexdigest()
     nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
@@ -133,6 +131,9 @@ class Meshenger:
     #tools
 
   def get_ip_adress(self):
+    """
+    Hack to adhoc0's inet6 adress
+    """
     if not os.path.isfile('interfaceip6adress'):
       os.system('ifconfig -a adhoc0 | grep inet6 > interfaceip6adress')
 
@@ -141,6 +142,6 @@ class Meshenger:
 
 
 
-  if __name__ == "__main__":
-    print "test"
-    meshenger = Meshenger()
+if __name__ == "__main__":
+  print "test"
+  meshenger = Meshenger()
