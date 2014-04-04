@@ -9,26 +9,32 @@ import SimpleHTTPServer
 import urlparse
 
 
-class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class MeshengerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+
+  messageDir = "msg"
+
+  """
+  Serve index and messages
+  """
   def do_GET(self):
-    if self.path == '/ip':
-      self.send_response(200)
-      self.send_header('Content-type', 'text/html')
-      self.end_headers()
-      self.wfile.write('Your IP address is %s' % self.client_address[0])
-      return
-    elif self.path == '/huh':
-      self.send_response(200)
-      self.send_header('Content-type', 'text/html')
-      self.end_headers()
-      self.wfile.write('huh')
-      return
-    else:
+    if self.path == '/':
+      self.path = "/index"
+
+    if self.path == '/index' or self.path.startswith( self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
-  def do_POST(self):
+    else:
+      self.send_response(404)
+      self.send_header('Content-type', 'text/html')
+      self.end_headers()
+      self.wfile.write('404 - Not Found')
 
-    if self.path == 'send'
+
+  """
+  Allow clients to post messages
+  """
+  def do_POST(self):
+    if self.path == '/send':
 
       length = int(self.headers['Content-Length'])
       post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
@@ -41,7 +47,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   def writeMessage(self, time, message):
 
-    f = os.path.join( "msg", time)
+    f = os.path.join( self.message, time)
     if os.path.isfile( f ):
       return
     with open( f, 'a') as the_file:
@@ -51,9 +57,15 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 class HTTPServerV6(HTTPServer):
   address_family = socket.AF_INET6
 
+class MeshengerServe():
+  def __init__(self, port):
+    server = HTTPServerV6(('::', port), MeshengerHandler)
+    server.serve_forever()
+
+
 def main():
-  server = HTTPServerV6(('::', 13338), MyHandler)
-  server.serve_forever()
+  clientServe = MeshengerServe(80)
+  nodeServe = MeshengerServe(13338)
 
 if __name__ == '__main__':
   main()
