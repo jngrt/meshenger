@@ -1,123 +1,144 @@
+#!/usr/bin/python
+
 import socket, os, time, select, urllib, sys
 
-def announce():
-
-	#announces it's existance to other nodes
-	sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-	sock.sendto(bericht, ("ff02::1", 13337))
-	sock.close()
-
-def index():
-
-	a = ''
-	# builds the latest index of all the messages that are on this node
-
-def discover(known_devices):
-
-	# discovers other nodes by listening to the Meshenger announce port
-	own_ip = get_ip_adress()
-	port = 13337  # where do you expect to get a msg?
-	bufferSize = 1024 # whatever you need
-
-	s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-	s.bind(('::', port))
-	s.setblocking(0)
-
-	global devices
-
-	while True:
-	    result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
-	    if result not in known_devices and result[1][0] != own_ip:
-	   		devices.append(result[1][0])
-	   		return
-	    time.sleep(1)
-
-def serve():
-
-	a = ''
-	# serves both the index and the messages on the node over http
-	# plus manages the client-side web interface
-
-def build_index():
-	previous_index = []
-
-	current_index = os.listdir('msg/')
-
-	if current_index != previous_index:
-		with open('index', 'wb') as index:
-			for message in os.listdir('msg/'):
-				index.write(message)
-				index.write('\n')
-		current_index = previous_index
-
-def get_index(ip, path):
-
-	os.system('wget http://['+ip+'%adhoc0]:13338/index -O '+os.path.join(path,'index'))
-
-	# downloads the index from other nodes and then proceeds to downloads messages it doesn't have already
-
-def get_messages(ip, path):
-
-	with open(os.path.join(path,'index')) as index:
-		index = index.read().split('\n')
-		for message in index:
-			messagepath = os.path.join(os.path.abspath('msg/'), message)
-			if not os.path.exists(messagepath):
-				print 'downloading', message, 'to', messagepath
-				os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
+class Meshenger:
+  devices = [] #the list of all the nodes this this node has seen
+  serve_port = 13338
+  announce_port = 13337
+  own_ip = "0.0.0.0"
 
 
-	# s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+  def __init__(self):
 
-	# s.connect(('http://[fe80::6666:b3ff:feeb:68c2%adhoc0]/lijst', 13338))
+    os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
+    #self.own_ip = self.get_ip_adress()
+    self.own_ip = "192.168.2.196"
 
-	# s.send("GET / HTTP/1.0\r\n\r\n")
+    while True:
 
-	# while 1:
-	# 	buf = s.recv(1000)
-	# 	if not buf:
-	# 		break
-	# 	sys.stdout.write(buf)
+      print 'discovering devices'
+      time.sleep(1)
+      self.discover()
 
-	# s.close()
+      if len(self.devices) > 0:
+        print 'found', len(self.devices),'device(s) retreiving indices'
+        for device in self.devices:
+          nodepath = ip_to_hash(device)
 
-def ip_to_hash(ip):
-	import hashlib
-	hasj = hashlib.md5(ip).hexdigest()
-	nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
-	if not os.path.exists(nodepath):
-		os.mkdir(nodepath)
+          self.get_index(device, nodepath)
 
-	return nodepath
+          self.get_messages(device, nodepath)
+          print 'updating own index'
+          self.build_index()
+          #voeg toe aan eigen index --> build_index()
+      time.sleep(5)
+
+  def announce(self):
+
+  	#announces it's existance to other nodes
+  	sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+  	sock.sendto(bericht, ("ff02::1", self.announce_port))
+  	sock.close()
+
+  def index(self):
+
+  	a = ''
+  	# builds the latest index of all the messages that are on this node
+
+  def discover(self):
+
+  	# discovers other nodes by listening to the Meshenger announce port
+  	#own_ip = get_ip_adress()
+  	#port = 13337  # where do you expect to get a msg?
+  	bufferSize = 1024 # whatever you need
+
+  	s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+  	s.bind(('::', self.announce_port))
+  	s.setblocking(0)
+
+  	#global devices
+
+  	while True:
+  	    result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
+  	    if result not in self.devices and result[1][0] != self.own_ip:
+  	   		self.devices.append(result[1][0])
+  	   		return
+  	    time.sleep(1)
+
+  def serve(self):
+
+  	a = ''
+  	# serves both the index and the messages on the node over http
+  	# plus manages the client-side web interface
+
+  def build_index(self):
+  	previous_index = []
+
+  	current_index = os.listdir('msg/')
+
+  	if current_index != previous_index:
+  		with open('index', 'wb') as index:
+  			for message in os.listdir('msg/'):
+  				index.write(message)
+  				index.write('\n')
+  		current_index = previous_index
+
+  def get_index(self,ip, path):
+
+  	os.system('wget http://['+ip+'%adhoc0]:13338/index -O '+os.path.join(path,'index'))
+
+  	# downloads the index from other nodes and then proceeds to downloads messages it doesn't have already
+
+  def get_messages(self, ip, path):
+
+  	with open(os.path.join(path,'index')) as index:
+  		index = index.read().split('\n')
+  		for message in index:
+  			messagepath = os.path.join(os.path.abspath('msg/'), message)
+  			if not os.path.exists(messagepath):
+  				print 'downloading', message, 'to', messagepath
+  				os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
 
 
-def clientsite():
-	a = ''
+  	# s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 
-#tools
+  	# s.connect(('http://[fe80::6666:b3ff:feeb:68c2%adhoc0]/lijst', 13338))
 
-def get_ip_adress():
-	if not os.path.isfile('interfaceip6adress'):
-		os.system('ifconfig -a adhoc0 | grep inet6 > interfaceip6adress')
+  	# s.send("GET / HTTP/1.0\r\n\r\n")
 
-	with open('interfaceip6adress', 'r') as a:
-		return a.read().split()[2].split('/')[0]
+  	# while 1:
+  	# 	buf = s.recv(1000)
+  	# 	if not buf:
+  	# 		break
+  	# 	sys.stdout.write(buf)
 
-while True:
-	devices = [] #the list of all the nodes this this node has seen
-	print 'discovering devices'
-	time.sleep(1)
-	discover(devices)
+  	# s.close()
 
-	if len(devices) > 0:
-		print 'found', len(devices),'device(s) retreiving indices'
-		for device in devices:
-			nodepath = ip_to_hash(device)
+  def ip_to_hash(self, ip):
+  	import hashlib
+  	hasj = hashlib.md5(ip).hexdigest()
+  	nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
+  	if not os.path.exists(nodepath):
+  		os.mkdir(nodepath)
 
-			get_index(device, nodepath)
+  	return nodepath
 
-			get_messages(device, nodepath)
-			print 'updating own index'
-			build_index()
-			#voeg toe aan eigen index --> build_index()
-	time.sleep(5)
+
+  def clientsite(self):
+  	a = ''
+
+  #tools
+
+  def get_ip_adress(self):
+  	if not os.path.isfile('interfaceip6adress'):
+  		os.system('ifconfig -a adhoc0 | grep inet6 > interfaceip6adress')
+
+  	with open('interfaceip6adress', 'r') as a:
+  		return a.read().split()[2].split('/')[0]
+
+
+
+if __name__ == "__main__":
+  print "test"
+  meshenger = Meshenger()
