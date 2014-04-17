@@ -20,7 +20,7 @@ We have used  the following models: TP-Link MR-3020, TP-Link TP-WR703n and TP-WR
 
 Open-WRT have a guide for each supported device that tells how to best flash your specific device with Open-WRT. [(Article on flashing)](http://wiki.openwrt.org/doc/howto/generic.flashing)
 
-After flashing proceed through the first login as described [(here)](http://wiki.openwrt.org/doc/howto/firstlogin)
+After flashing proceed through the first login as described [here.](http://wiki.openwrt.org/doc/howto/firstlogin)
 
 You are going to need to have an internet connection to your router, the easiest thing is to hook it up to the router. 
 
@@ -90,7 +90,7 @@ config mount
 ```
 ### Wireless configuration
 
-The next section is on how to set up the network interfaces to work with B.A.T.M.A.N the mesh networking protocol. It is more or less a summary of what's written [(here)](http://www.open-mesh.org/projects/batman-adv/wiki/Batman-adv-openwrt-config)
+The next section is on how to set up the network interfaces to work with B.A.T.M.A.N the mesh networking protocol. It is more or less a summary of what's written [here.](http://www.open-mesh.org/projects/batman-adv/wiki/Batman-adv-openwrt-config)
 
 `$ vi etc/config/wireless` and edit the wireless interface to look like this:
 
