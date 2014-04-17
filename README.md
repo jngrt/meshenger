@@ -74,7 +74,7 @@ config mount
     option enabled 1
     option enabled_fsck 0
 ```
-Reboot the device (`$ reboot -f`) and use `$ df -h' to confirm device now runs off the USB-Drive
+Reboot the device (`$ reboot -f`) and use `$ df -h` to confirm device now runs off the USB-Drive
 
 Next we configure the swap partition
 
@@ -87,5 +87,61 @@ Edit fstab again now make the swap look like this:
 config mount
 	option device   /dev/sda2
 	option enabled
-
+```
 ### Wireless configuration
+
+The next section is on how to set up the network interfaces to work with B.A.T.M.A.N the mesh networking protocol. It is more or less a summary of what's written [(here)](http://www.open-mesh.org/projects/batman-adv/wiki/Batman-adv-openwrt-config)
+
+`$ vi etc/config/wireless` and edit the wireless interface to look like this:
+
+Dont forget to remove the line that disables wireless
+
+```
+config wifi-iface 'wmesh'
+
+	option device  'radio0'
+
+	option ifname  'adhoc0'
+
+	option network 'mesh'  
+
+	option mode		'adhoc'
+
+	option ssid     'mesh'          
+
+	option bssid '66:66:66:66:66:66'
+```
+
+Next up is `$ vi etc/config/wireless` where we add this interface:
+
+```
+config interface 'mesh'
+
+	option ifname 'adhoc0'
+
+	option mtu '1528'
+
+	option proto 'none'
+
+```
+
+Lastly we edit `$ /etc/config/batman-adv ` to tell it which interface to use.
+
+```
+config mesh 'bat0'
+
+	option interfaces 'adhoc0'
+
+	option 'aggregated_ogms'
+
+	option 'ap_isolation' 
+
+	option [..]
+```
+
+`$ /etc/init.d/network restart` to make the changes take effect.
+
+If you have set this up properly on more than one node, the nodes should be able to see each other. Test with `$ batctl -o` 
+
+Make sure that you have the same version of batctl and openwrt on all nodes you plan to use.
+`$ uname -a && batctl -v ` to see the version information.
