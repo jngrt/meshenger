@@ -19,36 +19,51 @@ Meshenger requires routers that both support Open-WRT and *have at least one USB
 We have used  the following models: TP-Link MR-3020, TP-Link TP-WR703n and TP-WR842nd.
 
 Open-WRT have a guide for each supported device that tells how to best flash your specific device with Open-WRT. [(Article on flashing)](http://wiki.openwrt.org/doc/howto/generic.flashing)
+
 After flashing proceed through the first login as described [(here)](http://wiki.openwrt.org/doc/howto/firstlogin)
 
-You are going to need to have an internet connection to your router, the easiest thing is to hook it up to the router. Alternatively if you use OSX you can enable internet sharing (make sure to set your OSX machine as the gateway and DNS server for your router in /etc/config/network)
+You are going to need to have an internet connection to your router, the easiest thing is to hook it up to the router. 
+
+Alternatively if you use OSX you can enable internet sharing (make sure to set your OSX machine as the gateway and DNS server for your router in /etc/config/network)
 
 ### System configuration
 
 To use your router for Meshenger you're going to need to run the whole filesystem from a USB-Drive.
 
 Make sure that said USB-Drive is formatted as such:
+
 	- one ext4 partition
+
 	- one linux-swap partition (32mb seems to be sufficient so far)
 
 Next enable USB-Storage on the router:
+
 `$ opkg update`
+
 `$ opkg install 'block-mount kmod-usb-storage kmod-usb2 kmod-fs-ext4`
 
 To check if it works try `$ ls /dev/`. You shoud see sda, sda1 and sda2 
 
 Now mount the USB-Drive:
+
 `$ mkdir /mnt/sda1`
+
 `$ mount -t ext4 /dev/sda1 /mnt/sda1`
 
 Copy the whole filesystem to the USB-Drive:
+
 `$ mkdir -p /tmp/cproot`
+
 `$ mount --bind / /tmp/cproot`
+
 `$ tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf`
+
 `$ umount /tmp/cproot`
 
 Edit fstab
+
 `$ vi /etc/config/fstab`
+
 Make config mount look like:
 ```
 config mount 
@@ -62,7 +77,9 @@ config mount
 Reboot the device (`$ reboot -f`) and use `$ df -h' to confirm device now runs off the USB-Drive
 
 Next we configure the swap partition
+
 `$ mkswap /dev/sda2`
+
 `$ swapon /dev/sda2`
 
 Edit fstab again now make the swap look like this:
@@ -72,4 +89,3 @@ config mount
 	option enabled
 
 ### Wireless configuration
-	
