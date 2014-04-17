@@ -1,10 +1,75 @@
 meshenger
 =========
 
-Meshenger is a Forban-inspired messaging software used for a speculative broadcast communication project. The starting point is an electronic messaging system running on a wireless mesh network, composed of both fixed and moving nodes. The messages propagate through the network when devices that come in contact with each other synchronize their content. That means it has a non-hierarchical structure, where every node receives, relays and broadcasts messages.
+Meshenger is a Forban-inspired messaging software used for a speculative broadcast communication project. The starting point is an electronic messaging system running on a wireless mesh network. The messages propagate through the network when devices that come in contact with each other synchronize their content. It is non-hierarchical, every node receives, relays and broadcasts messages.
 
-Using Meshenger, each node in the network will synchronize all the messages on the device. Devices detect each other by continously broadcasting an identifier packet while listening to those of other nodes. As soon as two (or more) nodes detect each other they will try to synchronize the messages on each node.
+Using Meshenger. Devices detect each other by continously broadcasting an identifier packet while listening to those of other nodes. As soon as two (or more) nodes detect each other they will try to synchronize the messages on each node.
 
-The users of the network can interface with the nodes to send or receive messages by using the webbrowser of their smartphone or computer. The messages can be received and sent at any time, but they are only synchronized in the network when other nodes are encountered. Users make contact lists by exchanging public GPG keys that are used both as an address and a way to encode messages for a specific person. Public messages can be sent in plain text. These messages get synchronized across the network untill they expire after a given time or if they have travelled across a certain number of nodes, to prevent messages from traversing the network indefinately.
+The users of the network can interface with the nodes to send or receive messages by using the webbrowser of their smartphone or computer. The messages can be received and sent at any time, but they are only synchronized in the network when other nodes are encountered. 
 
-Meshenger is supposed to run on an Open-WRT router that has been configured to work in mesh networks (for details how to configure see the project wiki).
+Meshenger is supposed to run on an Open-WRT router that has been configured to work in mesh networks (for a configuration how-to see below).
+
+
+
+
+## Configuring a router for Open-WRT and Meshenger
+
+### Flashing and preparing
+Meshenger requires routers that both support Open-WRT and *have at least one USB port* [(List of Open-WRT routers here)](http://wiki.openwrt.org/toh/start).
+We have used  the following models: TP-Link MR-3020, TP-Link TP-WR703n and TP-WR842nd.
+
+Open-WRT have a guide for each supported device that tells how to best flash your specific device with Open-WRT. [(Article on flashing)](http://wiki.openwrt.org/doc/howto/generic.flashing)
+After flashing proceed through the first login as described [(here)](http://wiki.openwrt.org/doc/howto/firstlogin)
+
+You are going to need to have an internet connection to your router, the easiest thing is to hook it up to the router. Alternatively if you use OSX you can enable internet sharing (make sure to set your OSX machine as the gateway and DNS server for your router in /etc/config/network)
+
+### System configuration
+
+To use your router for Meshenger you're going to need to run the whole filesystem from a USB-Drive.
+
+Make sure that said USB-Drive is formatted as such:
+	- one ext4 partition
+	- one linux-swap partition (32mb seems to be sufficient so far)
+
+Next enable USB-Storage on the router:
+`$ opkg update`
+`$ opkg install 'block-mount kmod-usb-storage kmod-usb2 kmod-fs-ext4`
+
+To check if it works try `$ ls /dev/`. You shoud see sda, sda1 and sda2 
+
+Now mount the USB-Drive:
+`$ mkdir /mnt/sda1`
+`$ mount -t ext4 /dev/sda1 /mnt/sda1`
+
+Copy the whole filesystem to the USB-Drive:
+`$ mkdir -p /tmp/cproot`
+`$ mount --bind / /tmp/cproot`
+`$ tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf`
+`$ umount /tmp/cproot`
+
+Edit fstab
+`$ vi /etc/config/fstab`
+Make config mount look like:
+```
+config mount 
+    option target /
+    option device /dev/sda1
+    option fstype ext4
+    option options rw,sync
+    option enabled 1
+    option enabled_fsck 0
+```
+Reboot the device (`$ reboot -f`) and use `$ df -h' to confirm device now runs off the USB-Drive
+
+Next we configure the swap partition
+`$ mkswap /dev/sda2`
+`$ swapon /dev/sda2`
+
+Edit fstab again now make the swap look like this:
+```
+config mount
+	option device   /dev/sda2
+	option enabled
+
+### Wireless configuration
+	
