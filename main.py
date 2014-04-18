@@ -19,6 +19,10 @@ class Meshenger:
     print 'Building own index for the first time\n'
     self.build_index()
 
+    if not os.path.exists(self.msg_dir):
+      os.mkdir(self.msg_dir)
+      print 'Making message directory'
+
     try:
       d = threading.Thread(target=self.discover)
       d.daemon = True
