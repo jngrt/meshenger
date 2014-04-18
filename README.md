@@ -112,7 +112,7 @@ config wifi-iface 'wmesh'
 	option bssid '66:66:66:66:66:66'
 ```
 
-Next up is `$ vi etc/config/wireless` where we add this interface:
+Next up is `$ vi etc/config/network` where we add this interface:
 
 ```
 config interface 'mesh'
@@ -123,9 +123,11 @@ config interface 'mesh'
 
 	option proto 'none'
 
-```
+Install B.A.T.M.A.N and IP6 support.
 
-Lastly we edit `$ /etc/config/batman-adv ` to tell it which interface to use.
+`$ opkg install kmod-batman-adv kmod-ipv6`
+
+Then edit `$ /etc/config/batman-adv ` to tell it which interface to use.
 
 ```
 config mesh 'bat0'
@@ -145,3 +147,12 @@ If you have set this up properly on more than one node, the nodes should be able
 
 Make sure that you have the same version of batctl and openwrt on all nodes you plan to use.
 `$ uname -a && batctl -v ` to see the version information.
+
+
+### Installing meshenger
+
+Get the dependencies and clone the git
+
+`$ opkg install python git `
+
+`$ git clone git://github.com/jngrt/meshenger.git `

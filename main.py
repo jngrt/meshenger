@@ -16,12 +16,13 @@ class Meshenger:
 
     #os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
     self.own_ip = self.get_ip_adress()
-    print 'Building own index for the first time\n'
-    self.build_index()
 
     if not os.path.exists(self.msg_dir):
       os.mkdir(self.msg_dir)
       print 'Making message directory'
+
+    print 'Building own index for the first time\n'
+    self.build_index()
 
     try:
       d = threading.Thread(target=self.discover)
