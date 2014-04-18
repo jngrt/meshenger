@@ -122,6 +122,7 @@ config interface 'mesh'
 	option mtu '1528'
 
 	option proto 'none'
+```
 
 Install B.A.T.M.A.N and IP6 support.
 
