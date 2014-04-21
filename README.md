@@ -56,7 +56,7 @@ Copy the whole filesystem to the USB-Drive:
 
 `$ mount --bind / /tmp/cproot`
 
-`$ tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf`
+`$ tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf -`
 
 `$ umount /tmp/cproot`
 

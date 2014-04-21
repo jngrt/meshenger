@@ -33,6 +33,10 @@ class Meshenger:
       a.daemon = True
       a.start()
 
+      s = threading.Thread(target=self.serve)
+      s.daemon = True
+      s.start()
+
     except (KeyboardInterrupt, SystemExit):
       print 'exiting discovery thread'
       d.join()
@@ -100,19 +104,12 @@ class Meshenger:
       time.sleep(1)
 
   def serve(self):
-
-    # try:
-    #   t = threading.Thread(target=BorderCheckWebserver, args=(self, ))
-    #   t.daemon = True
-    #   t.start()
-    #   time.sleep(2)
-    # except (KeyboardInterrupt, SystemExit):
-    #   t.join()
-    #   sys.exit()
-
-    a = ''
-    # serves both the index and the messages on the node over http
-    # plus manages the client-side web interface
+    """
+    Initialize the server 
+    """
+    print 'Serving'
+    import meshenger_serve
+    meshenger_serve.main()
 
   def build_index(self):
     """
@@ -165,6 +162,7 @@ class Meshenger:
     hasj = hashlib.md5(ip).hexdigest()
     nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
     if not os.path.exists(nodepath):
+      os.mkdir('nodes')
       os.mkdir(nodepath)
 
     return nodepath
