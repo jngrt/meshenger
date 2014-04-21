@@ -1,0 +1,8 @@
+
+config wifi-iface	'wmesh'
+	option device 	'radio0'
+	option ifname	'adhoc0'
+	option network	'mesh'  
+	option mode		'adhoc'
+	option ssid		'mesh'          
+	option bssid	'66:66:66:66:66:66'

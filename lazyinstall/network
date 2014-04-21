@@ -1,0 +1,20 @@
+config interface 'loopback'
+        option ifname   'lo'
+        option proto    'static'
+        option ipaddr   '127.0.0.1'
+        option netmask  '255.0.0.0'
+
+config interface 'lan'
+        option  ifname  'eth0'
+        option  type    'bridge'
+        option  proto   'static'
+        option  ipaddr  '192.168.1.115' #change me! 
+        option  netmask '255.255.255.0'
+        option  gateway '192.168.1.2' #change me!
+        list    dns     '8.8.8.8'
+
+config interface 'mesh'
+        option ifname   'adhoc0'
+        option mtu      '1528'
+        option proto    'none'
+
