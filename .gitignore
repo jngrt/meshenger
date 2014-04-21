@@ -1,3 +1,6 @@
 interfaceip6adress
 msg/*
 .DS_Store*
+index
+interfaceip6adress
+nodes/*
