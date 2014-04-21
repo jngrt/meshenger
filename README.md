@@ -150,6 +150,99 @@ Make sure that you have the same version of batctl and openwrt on all nodes you 
 `$ uname -a && batctl -v ` to see the version information.
 
 
+### Configuring / Adding a client Hotspot
+
+For the front-end, the client user interface, we must have a captive portal running. These are the first steps in enableing another wireless interface for the hotspot
+
+
+
+Add the following lines in the following config files and restart the network:
+
+`$ vi /etc/config/network`
+
+```
+config interface 'hotspot'    
+        option 'iface' 'radio0' #use your excisting wifi device (look in config/wireless below)
+        option 'proto' 'static'
+        option 'ipaddr' '192.168.2.1'
+        option 'netmask' '255.255.255.0'
+        option 'type' 'bridge'           
+                                    
+```
+
+`$ vi /etc/config/wireless`
+
+```
+config wifi-iface                       
+        option 'device' 'radio0'  #use your excisting wifi device, look in the list above.    
+        option 'ssid' 'meshtest1'       
+        option 'network' 'hotspot'      
+        option 'mode' 'ap'              
+        option 'encryption' 'none'
+        option 'isolate' '1'  
+```
+
+`$ vi /etc/config/dhcp`
+
+```
+config dhcp hotspot                           
+        option 'interface' 'hotspot'          
+        option 'start' '100'                  
+        option 'limit' '150'        
+        option 'dynamicdhcp' '1'  
+```
+
+`$ vi /etc/config/firewall` enable handing out dhcp addresses to wifi clients
+
+```                                             
+config 'zone'                                          
+        option 'name' 'hotspot'                        
+        option 'input' 'ACCEPT'                        
+        option 'forward' 'ACCEPT' #was REJECT                      
+        option  'output' 'ACCEPT'                      
+                                                       
+config 'rule'                                     
+     
+        option 'src' 'hotspot'                         
+        option 'dest_port' '53'                        
+        option 'proto' 'tcpudp'                        
+        option 'target' 'ACCEPT'                       
+                                                       
+config 'rule'                                          
+        option 'src' 'hotspot'                         
+        option 'src_port' '67-68'                      
+        option 'dest_port' '67-68'                     
+        option 'proto' 'udp'                           
+        option 'target' 'ACCEPT'                       
+```                                 
+
+`$ /etc/init.d/network restart`
+`$ /etc/init.d/firewall restart`
+`$ /etc/init.d/dnsmasq restart`
+
+
+to serve file, run uhttpd server, for example in home folder:
+`$ /usr/sbin/uhttpd -f -p 8080 -h Meshenger/msg`
+
+
+the website will be available at 192.168.2.1:8080 from meshtest network.
+
+easier is to maybe use the already running uhttpd, used by luci and change the config file?
+(to 'catch all' and 'forward all http' requests to correct folder) (/etc/httpd.conf or /etc/config/uhttpd)
+
+
+make luci work on port 81, freeing port 80 for us (or disable luci completely)
+`$ vi /etc/config/uhttpd`
+`$ /etc/init.d/uhttpd restart`
+
+this is not ideal ofcourse, but i cant get python to run on localhost port 80 and be accessible...
+
+NOTES/TODO
+-maybe add extra port 80 rules in the firewall?
+-disable luci? /etc/init.d/uhttpd disable
+
+
+
 ### Installing meshenger
 
 Get the dependencies and clone the git
