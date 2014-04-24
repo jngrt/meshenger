@@ -52,10 +52,12 @@ class Meshenger:
           nodepath = self.ip_to_hash(device) #make a folder for the node (nodes/'hash'/)
           nodeupdatepath = os.path.join(self.ip_to_hash(device), 'lastupdate')
 
+        
           print 'Checking age of foreign node index'
           print self.devices[device]
           foreign_node_update = open(nodeupdatepath).read()
           print foreign_node_update
+
 
           if self.devices[device] > foreign_node_update:
             print 'Foreign node"s index is newer, proceed to download index'
@@ -100,15 +102,19 @@ Discover other devices by listening to the Meshenger announce port
     s.setblocking(0)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
-      
-      if result[1][0] not in self.devices and result[1][0] != self.own_ip:
-        #loop for first time
-        self.devices[result[1][0]] = result[0]
-        node_timestamp(result[1][0])
 
       if result[1][0] in self.devices and result[1][0] != self.own_ip:
+        print 'node al een keer gezien'
         self.devices[result[1][0]] = result[0]
         #self.devices.append(result[1][0])
+      
+      elif result[1][0] not in self.devices and result[1][0] != self.own_ip:
+        print 'node eerste keer'
+        #loop for first time
+        self.devices[result[1][0]] = result[0]
+        self.node_timestamp(result[1][0])
+
+
 
       time.sleep(1)
 
