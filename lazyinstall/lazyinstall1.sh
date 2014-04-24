@@ -24,7 +24,9 @@ sleep 4
 echo 'Copying filesystem to USB drive'
 mkdir -p /tmp/cproot
 mount --bind / /tmp/cproot
+sleep 1
 tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf -
+sleep 1
 umount /tmp/cproot
 
 sleep 4
@@ -32,6 +34,5 @@ echo 'Configuring fstab'
 
 mv fstab /etc/config/fstab
 
-echo 'Reboot'
-reboot -f
+echo 'Done configuring you can now reboot using $reboot -f'
 
