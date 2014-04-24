@@ -47,7 +47,7 @@ class Meshenger:
       sys.exit()
 
     while True:
-
+      print 'Entering main loop'
       if len(self.devices) > 0:
         print 'found', len(self.devices),'device(s)'
 
@@ -186,11 +186,13 @@ Get new messages from other node based on it's index file
     """
 Convert a node's ip into a hash and make a directory to store it's files
 """
+    if not os.path.exists('nodes'):
+    os.mkdir('nodes')
+
     import hashlib
     hasj = hashlib.md5(ip).hexdigest()
-    nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
+    nodepath = os.path.join(os.path.abspath('nodes'), hasj)
     if not os.path.exists(nodepath):
-      os.mkdir('nodes')
       os.mkdir(nodepath)
 
     return nodepath
