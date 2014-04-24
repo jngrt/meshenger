@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket, os, time, select, urllib, sys, threading 
+import socket, os, time, select, urllib, sys, threading
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
@@ -9,7 +9,7 @@ class Meshenger:
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
-  index_last_update = str(int(time.time()))
+  index_last_update = str(time.time())
 
 
   def __init__(self):
@@ -49,14 +49,16 @@ class Meshenger:
         print 'found', len(self.devices),'device(s) retreiving indices'
 
         for device in self.devices:
-          nodepath = self.ip_to_hash(device)  #make a folder for the node (nodes/'hash'/)
-          nodeupdatepath = os.path.join(nodepath, 'lastupdate') #contains the path to the update timestamp of the node (nodes/'hash'/lastupdate)
+          nodepath = self.ip_to_hash(device) #make a folder for the node (nodes/'hash'/)
+          nodeupdatepath = os.path.join(self.ip_to_hash(device), 'lastupdate')
 
           print 'Checking age of foreign node index'
+          print self.devices[device]
+          foreign_node_update = open(nodeupdatepath).read()
+          print foreign_node_update
 
-          if self.devices[device][2] > open(nodeupdatepath).read():
-            
-            print 'Foreign node"s index is newer, proceed to download index' 
+          if self.devices[device] > foreign_node_update:
+            print 'Foreign node"s index is newer, proceed to download index'
             self.get_index(device, nodepath)
             print 'downloading messages'
             self.get_messages(device, nodepath)
@@ -65,19 +67,19 @@ class Meshenger:
           
       time.sleep(5) #free process or ctrl+c
  
-  def node_timestamp(self):
+  def node_timestamp(self, ip):
 
-      updatepath = os.path.join(path, 'lastupdate')
+      updatepath = os.path.join(self.ip_to_hash(ip), 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
-        lastupdate.write(self.devices[ip][2])
-      return updatepath
+        lastupdate.write(self.devices[ip])
+      #return updatepath
 
 
 
   def announce(self):
     """
-    Announce the node's existance to other nodes
-    """
+Announce the node's existance to other nodes
+"""
     print 'Announcing'
     while not self.exitapp:
       sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -87,8 +89,8 @@ class Meshenger:
 
   def discover(self):
     """
-    Discover other devices by listening to the Meshenger announce port
-    """
+Discover other devices by listening to the Meshenger announce port
+"""
 
     print 'Discovering'
     bufferSize = 1024 # whatever you need
@@ -98,52 +100,31 @@ class Meshenger:
     s.setblocking(0)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
-      foreign_node_ip = result[1][0]
+      
+      if result[1][0] not in self.devices and result[1][0] != self.own_ip:
+        #loop for first time
+        self.devices[result[1][0]] = result[0]
+        node_timestamp(result[1][0])
 
-      if foreign_node_ip not in self.devices and foreign_node_ip != self.own_ip:
-        print 'voor het eerst toegevoegd'
-        timestamp = result[0] #get the timestamp that foreign node announced
-        oldtimestamp = timestamp
-        localtimestamp = str(int(time.time()))
-        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp) #add everything to dictionary
-
-        with open(os.path.join(self.ip_to_hash(foreign_node_ip), 'lastupdate'),'wb') as lastupdate:
-          lastupdate.write(localtimestamp) #convert what node announced to local time and save for node in nodes/hash/lastupdate
-
-      if foreign_node_ip in self.devices and foreign_node_ip != self.own_ip: 
-        timestamp = result[0] # we already know the node, so we update timestamp (might now give difference between old and new timestamp)
-        oldtimestamp = self.devices[foreign_node_ip][1]
-        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp)
-        print 'timestamp update'
-        #print self.devices[foreign_node_ip]
-
-        if timestamp != oldtimestamp: 
-          localtimestamp = str(int(time.time()))
-          self.devices[foreign_node_ip] = (timestamp, timestamp, localtimestamp)
-
-          with open(os.path.join(self.ip_to_hash(foreign_node_ip), 'lastupdate'),'wb') as lastupdate:
-            lastupdate.write(localtimestamp)
-          print 'local tijd aangepast'
-
-          #print self.devices[foreign_node_ip]
-        
+      if result[1][0] in self.devices and result[1][0] != self.own_ip:
+        self.devices[result[1][0]] = result[0]
         #self.devices.append(result[1][0])
 
       time.sleep(1)
 
   def serve(self):
     """
-    Initialize the server 
-    """
+Initialize the server
+"""
     print 'Serving'
     import meshenger_serve
     meshenger_serve.main()
 
   def build_index(self):
     """
-    Make an index file of all the messages present on the node.
-    Save the time of the last update.
-    """
+Make an index file of all the messages present on the node.
+Save the time of the last update.
+"""
     if not os.path.exists('index'):
       with open('index','wb') as index:
         index.write('')
@@ -157,26 +138,25 @@ class Meshenger:
         for message in os.listdir(self.msg_dir):
           index.write(message)
           index.write('\n')
-
       self.index_last_update = str(int(time.time()))
 
       with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
         indexupdate.write(str(int(time.time())))
 
-    current_index = previous_index
+      current_index = previous_index
 
   def get_index(self,ip, path):
     """
-    Download the indices from other nodes.
-    """
+Download the indices from other nodes.
+"""
 
     os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 
 
   def get_messages(self, ip, path):
     """
-    Get new messages from other node based on it's index file
-    """
+Get new messages from other node based on it's index file
+"""
     try:
       with open(os.path.join(path,'index')) as index:
         index = index.read().split('\n')
@@ -190,8 +170,8 @@ class Meshenger:
 
   def ip_to_hash(self, ip):
     """
-    Convert a node's ip into a hash and make a directory to store it's files
-    """
+Convert a node's ip into a hash and make a directory to store it's files
+"""
     import hashlib
     hasj = hashlib.md5(ip).hexdigest()
     nodepath = os.path.join(os.path.abspath('nodes/'), hasj)
@@ -209,8 +189,8 @@ class Meshenger:
 
   def get_ip_adress(self):
     """
-    Hack to adhoc0's inet6 adress
-    """
+Hack to adhoc0's inet6 adress
+"""
     if not os.path.isfile('interfaceip6adress'):
       os.system('ifconfig -a adhoc0 | grep inet6 > /root/meshenger/interfaceip6adress')
     with open('interfaceip6adress', 'r') as a:
@@ -219,9 +199,10 @@ class Meshenger:
 
 
 if __name__ == "__main__":
-  print "test"  
+  print "test"
   try:
     meshenger = Meshenger()
   except (KeyboardInterrupt, SystemExit):
     exitapp = True
     raise
+
