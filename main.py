@@ -65,8 +65,10 @@ class Meshenger:
           if self.devices[device] > foreign_node_update:
             print 'Foreign node"s index is newer, proceed to download index'
             self.get_index(device, nodepath)
+            self.node_timestamp(device)
             print 'downloading messages'
             self.get_messages(device, nodepath)
+
             #print 'updating own index'
             #self.build_index()
           
