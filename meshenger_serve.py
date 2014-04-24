@@ -64,7 +64,7 @@ class MeshengerServe():
 
 
 def main():
-  clientServe = MeshengerServe(80)
+  #clientServe = MeshengerServe(80)
   nodeServe = MeshengerServe(13338)
 
 if __name__ == '__main__':

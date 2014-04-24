@@ -50,11 +50,12 @@ class Meshenger:
 
         for device in self.devices:
           nodepath = self.ip_to_hash(device)  #make a folder for the node (nodes/'hash'/)
-          nodeupdatepath = self.node_timestamp(device, nodepath) #contains the path to the update timestamp of the node (nodes/'hash'/lastupdate)
+          nodeupdatepath = os.path.join(nodepath, 'lastupdate') #contains the path to the update timestamp of the node (nodes/'hash'/lastupdate)
 
           print 'Checking age of foreign node index'
-    
-          if self.devices[device] > nodeupdatepath:
+
+          if self.devices[device][2] > open(nodeupdatepath).read():
+            
             print 'Foreign node"s index is newer, proceed to download index' 
             self.get_index(device, nodepath)
             print 'downloading messages'
@@ -64,7 +65,7 @@ class Meshenger:
           
       time.sleep(5) #free process or ctrl+c
  
-  def node_timestamp(self, ip, path):
+  def node_timestamp(self):
 
       updatepath = os.path.join(path, 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
@@ -101,23 +102,30 @@ class Meshenger:
 
       if foreign_node_ip not in self.devices and foreign_node_ip != self.own_ip:
         print 'voor het eerst toegevoegd'
-        timestamp = result[0]
+        timestamp = result[0] #get the timestamp that foreign node announced
         oldtimestamp = timestamp
         localtimestamp = str(int(time.time()))
-        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp)
+        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp) #add everything to dictionary
 
-      if foreign_node_ip in self.devices and foreign_node_ip != self.own_ip:
-        timestamp = result[0]
+        with open(os.path.join(self.ip_to_hash(foreign_node_ip), 'lastupdate'),'wb') as lastupdate:
+          lastupdate.write(localtimestamp) #convert what node announced to local time and save for node in nodes/hash/lastupdate
+
+      if foreign_node_ip in self.devices and foreign_node_ip != self.own_ip: 
+        timestamp = result[0] # we already know the node, so we update timestamp (might now give difference between old and new timestamp)
         oldtimestamp = self.devices[foreign_node_ip][1]
         self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp)
         print 'timestamp update'
-        print self.devices[foreign_node_ip]
+        #print self.devices[foreign_node_ip]
 
-        if timestamp != oldtimestamp:
+        if timestamp != oldtimestamp: 
           localtimestamp = str(int(time.time()))
           self.devices[foreign_node_ip] = (timestamp, timestamp, localtimestamp)
-          print 'timestamp check'
-          print self.devices[foreign_node_ip]
+
+          with open(os.path.join(self.ip_to_hash(foreign_node_ip), 'lastupdate'),'wb') as lastupdate:
+            lastupdate.write(localtimestamp)
+          print 'local tijd aangepast'
+
+          #print self.devices[foreign_node_ip]
         
         #self.devices.append(result[1][0])
 
