@@ -21,9 +21,6 @@ class Meshenger:
       os.mkdir(self.msg_dir)
       print 'Making message directory'
 
-    print 'Building own index for the first time\n'
-    self.build_index()
-
     try:
       d = threading.Thread(target=self.discover)
       d.daemon = True
@@ -37,10 +34,16 @@ class Meshenger:
       s.daemon = True
       s.start()
 
+      b = threading.Thread(target=self.build_index)
+      b.daemon = True
+      b.start()
+
     except (KeyboardInterrupt, SystemExit):
       print 'exiting discovery thread'
       d.join()
       a.join()
+      b.join()
+      s.join()
       sys.exit()
 
     while True:
@@ -64,8 +67,8 @@ class Meshenger:
             self.get_index(device, nodepath)
             print 'downloading messages'
             self.get_messages(device, nodepath)
-            print 'updating own index'
-            self.build_index()
+            #print 'updating own index'
+            #self.build_index()
           
       time.sleep(5) #free process or ctrl+c
  
@@ -131,25 +134,31 @@ Initialize the server
 Make an index file of all the messages present on the node.
 Save the time of the last update.
 """
+
+    print 'Building own index for the first time\n'
+
     if not os.path.exists('index'):
       with open('index','wb') as index:
         index.write('')
 
     previous_index = []
 
-    current_index = os.listdir(self.msg_dir)
+    while not self.exitapp:
+      current_index = os.listdir(self.msg_dir)
+      if current_index != previous_index:
+        with open('index', 'wb') as index:
+          for message in os.listdir(self.msg_dir):
+            index.write(message)
+            index.write('\n')
+        self.index_last_update = str(int(time.time()))
+        
+        print 'Index updated:', current_index
 
-    if current_index != previous_index:
-      with open('index', 'wb') as index:
-        for message in os.listdir(self.msg_dir):
-          index.write(message)
-          index.write('\n')
-      self.index_last_update = str(int(time.time()))
+        with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
+          indexupdate.write(str(int(time.time())))
 
-      with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
-        indexupdate.write(str(int(time.time())))
-
-      current_index = previous_index
+      previous_index = current_index
+      time.sleep(5)
 
   def get_index(self,ip, path):
     """
