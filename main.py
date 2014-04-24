@@ -9,7 +9,7 @@ class Meshenger:
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
-  index_last_update = str(time.time())
+  index_last_update = str(int(time.time()))
 
 
   def __init__(self):
@@ -53,6 +53,7 @@ class Meshenger:
           nodeupdatepath = self.node_timestamp(device, nodepath) #contains the path to the update timestamp of the node (nodes/'hash'/lastupdate)
 
           print 'Checking age of foreign node index'
+    
           if self.devices[device] > nodeupdatepath:
             print 'Foreign node"s index is newer, proceed to download index' 
             self.get_index(device, nodepath)
@@ -67,7 +68,7 @@ class Meshenger:
 
       updatepath = os.path.join(path, 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
-        lastupdate.write(self.devices[ip])
+        lastupdate.write(self.devices[ip][2])
       return updatepath
 
 
@@ -94,11 +95,30 @@ class Meshenger:
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.bind(('::', self.announce_port))
     s.setblocking(0)
-    print select.select([s],[],[]).recvfrom(bufferSize)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
-      if result[1][0] not in self.devices and result[1][0] != self.own_ip:
-        self.devices[result[1][0]] = result[0][0]
+      foreign_node_ip = result[1][0]
+
+      if foreign_node_ip not in self.devices and foreign_node_ip != self.own_ip:
+        print 'voor het eerst toegevoegd'
+        timestamp = result[0]
+        oldtimestamp = timestamp
+        localtimestamp = str(int(time.time()))
+        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp)
+
+      if foreign_node_ip in self.devices and foreign_node_ip != self.own_ip:
+        timestamp = result[0]
+        oldtimestamp = self.devices[foreign_node_ip][1]
+        self.devices[foreign_node_ip] = (timestamp, oldtimestamp, localtimestamp)
+        print 'timestamp update'
+        print self.devices[foreign_node_ip]
+
+        if timestamp != oldtimestamp:
+          localtimestamp = str(int(time.time()))
+          self.devices[foreign_node_ip] = (timestamp, timestamp, localtimestamp)
+          print 'timestamp check'
+          print self.devices[foreign_node_ip]
+        
         #self.devices.append(result[1][0])
 
       time.sleep(1)
@@ -129,12 +149,13 @@ class Meshenger:
         for message in os.listdir(self.msg_dir):
           index.write(message)
           index.write('\n')
+
       self.index_last_update = str(int(time.time()))
 
       with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
         indexupdate.write(str(int(time.time())))
 
-      current_index = previous_index
+    current_index = previous_index
 
   def get_index(self,ip, path):
     """
