@@ -49,7 +49,7 @@ class Meshenger:
     while True:
 
       if len(self.devices) > 0:
-        print 'found', len(self.devices),'device(s) retreiving indices'
+        print 'found', len(self.devices),'device(s)'
 
         for device in self.devices:
           nodepath = self.ip_to_hash(device) #make a folder for the node (nodes/'hash'/)
@@ -57,9 +57,9 @@ class Meshenger:
 
         
           print 'Checking age of foreign node index'
-          print self.devices[device]
+          print self.devices[device], 'Foreign announce timestamp'
           foreign_node_update = open(nodeupdatepath).read()
-          print foreign_node_update
+          print foreign_node_update, 'Locally stored timestamp for device'
 
 
           if self.devices[device] > foreign_node_update:
@@ -68,9 +68,6 @@ class Meshenger:
             self.node_timestamp(device)
             print 'downloading messages'
             self.get_messages(device, nodepath)
-
-            #print 'updating own index'
-            #self.build_index()
           
       time.sleep(5) #free process or ctrl+c
  
@@ -109,15 +106,15 @@ Discover other devices by listening to the Meshenger announce port
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
 
       if result[1][0] in self.devices and result[1][0] != self.own_ip:
-        print 'node al een keer gezien'
+        print 'Known node', result[1][0]
         self.devices[result[1][0]] = result[0]
         #self.devices.append(result[1][0])
       
       elif result[1][0] not in self.devices and result[1][0] != self.own_ip:
-        print 'node eerste keer'
         #loop for first time
         self.devices[result[1][0]] = result[0]
         self.node_timestamp(result[1][0])
+        print 'New node', result[1][0]
 
 
 
