@@ -14,7 +14,7 @@ class Meshenger:
 
   def __init__(self):
 
-    #os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
+    os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
     self.own_ip = self.get_ip_adress()
 
     if not os.path.exists(self.msg_dir):
@@ -144,15 +144,16 @@ class Meshenger:
     """
     Get new messages from other node based on it's index file
     """
-
-    with open(os.path.join(path,'index')) as index:
-      index = index.read().split('\n')
-      for message in index:
-        messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
-        if not os.path.exists(messagepath):
-          print 'downloading', message, 'to', messagepath
-          os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
-
+    try:
+      with open(os.path.join(path,'index')) as index:
+        index = index.read().split('\n')
+        for message in index:
+          messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
+          if not os.path.exists(messagepath):
+            print 'downloading', message, 'to', messagepath
+            os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
+    except:
+      pass
 
   def ip_to_hash(self, ip):
     """
@@ -178,7 +179,7 @@ class Meshenger:
     Hack to adhoc0's inet6 adress
     """
     if not os.path.isfile('interfaceip6adress'):
-      os.system('ifconfig -a adhoc0 | grep inet6 > interfaceip6adress')
+      os.system('ifconfig -a adhoc0 | grep inet6 > /root/meshenger/interfaceip6adress')
     with open('interfaceip6adress', 'r') as a:
       return a.read().split()[2].split('/')[0]
 

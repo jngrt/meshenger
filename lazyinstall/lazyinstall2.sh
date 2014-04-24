@@ -28,7 +28,7 @@ git clone git://github.com/jngrt/meshenger.git
 
 mv uhttpd /etc/config/uhttpd
 
-echo 'my ip address is:'
+echo 'my ip address is:' #klopt nog niet
 ifconfig  br-lan | grep 'inet addr'
 
 echo 'Done configuring you can now reboot using $reboot -f'
