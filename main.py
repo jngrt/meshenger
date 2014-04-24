@@ -4,12 +4,12 @@ import socket, os, time, select, urllib, sys, threading
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
-  serve_port = 13338
+  serve_port = "13338"
   announce_port = 13337
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
-  index_last_update = ''
+  index_last_update = str(time.time())
 
 
   def __init__(self):
@@ -94,7 +94,7 @@ class Meshenger:
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.bind(('::', self.announce_port))
     s.setblocking(0)
-
+    print select.select([s],[],[]).recvfrom(bufferSize)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       if result[1][0] not in self.devices and result[1][0] != self.own_ip:
@@ -116,6 +116,10 @@ class Meshenger:
     Make an index file of all the messages present on the node.
     Save the time of the last update.
     """
+    if not os.path.exists('index'):
+      with open('index','wb') as index:
+        index.write('')
+
     previous_index = []
 
     current_index = os.listdir(self.msg_dir)
@@ -137,7 +141,7 @@ class Meshenger:
     Download the indices from other nodes.
     """
 
-    os.system('wget http://['+ip+'%adhoc0]:13338/index -O '+os.path.join(path,'index'))
+    os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 
 
   def get_messages(self, ip, path):
@@ -151,7 +155,7 @@ class Meshenger:
           messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
-            os.system('wget http://['+ip+'%adhoc0]:13338/msg/'+message+' -O '+messagepath)
+            os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)
     except:
       pass
 

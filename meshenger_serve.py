@@ -11,7 +11,7 @@ import urlparse
 
 class MeshengerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
-  messageDir = "msg"
+  messageDir = "/msg"
 
   """
   Serve index and messages
