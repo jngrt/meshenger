@@ -17,7 +17,7 @@ mount -t ext4 /dev/sda1 /mnt/sda1
 
 echo 'Cleaning USB drive'
 
-rm -r /mnt/sda1
+rm -r /mnt/sda1/
 
 sleep 4
 
