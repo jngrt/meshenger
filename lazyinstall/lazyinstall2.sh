@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 
 echo 'This is the meshenger lazy install part two!'
