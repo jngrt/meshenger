@@ -175,7 +175,7 @@ config interface 'hotspot'
 ```
 config wifi-iface                       
         option 'device' 'radio0'  #use your excisting wifi device, look in the list above.    
-        option 'ssid' 'meshtest1'       
+        option 'ssid' 'meshtest1'  #use a unique name for your network?
         option 'network' 'hotspot'      
         option 'mode' 'ap'              
         option 'encryption' 'none'
