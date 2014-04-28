@@ -12,7 +12,7 @@ import unicodedata
 
 class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
-  messageDir = "/msg"
+  messageDir = "msg"
 
   """
   Serve index and messages
@@ -28,7 +28,7 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
 
-    elif self.path == '/index' or self.path.startswith( self.messageDir ):
+    elif self.path == '/index' or self.path.startswith( "/"+self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
     else:
