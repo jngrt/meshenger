@@ -11,7 +11,6 @@ class Meshenger:
   exitapp = False #to kill all threads on
   index_last_update = str(time.time())
 
-
   def __init__(self):
 
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
@@ -31,20 +30,27 @@ class Meshenger:
       a.daemon = True
       a.start()
 
-      s = threading.Thread(target=self.serve)
-      s.daemon = True
-      s.start()
+      n = threading.Thread(target=self.nodeserve)
+      n.daemon = True
+      n.start()
+
+      c = threading.Thread(target=self.clientserve)
+      c.daemon = True
+      c.start()
 
       b = threading.Thread(target=self.build_index)
       b.daemon = True
       b.start()
+
+      #os.system("python meshenger_clientserve.py")
 
     except (KeyboardInterrupt, SystemExit):
       print 'exiting discovery thread'
       d.join()
       a.join()
       b.join()
-      s.join()
+      n.join()
+      c.join()
       sys.exit()
 
     while True:
@@ -57,7 +63,7 @@ class Meshenger:
           nodepath = self.ip_to_hash(device) #make a folder for the node (nodes/'hash'/)
           nodeupdatepath = os.path.join(self.ip_to_hash(device), 'lastupdate')
 
-        
+
           print 'Checking age of foreign node index'
           print self.devices[device], 'Foreign announce timestamp'
           foreign_node_update = open(nodeupdatepath).read()
@@ -70,9 +76,9 @@ class Meshenger:
             self.node_timestamp(device)
             print 'downloading messages'
             self.get_messages(device, nodepath)
-          
+
       time.sleep(5) #free process or ctrl+c
- 
+
   def node_timestamp(self, ip):
 
       updatepath = os.path.join(self.ip_to_hash(ip), 'lastupdate')
@@ -111,7 +117,7 @@ Discover other devices by listening to the Meshenger announce port
         print 'Known node', result[1][0]
         self.devices[result[1][0]] = result[0]
         #self.devices.append(result[1][0])
-      
+
       elif result[1][0] not in self.devices and result[1][0] != self.own_ip:
         #loop for first time
         self.devices[result[1][0]] = result[0]
@@ -122,13 +128,22 @@ Discover other devices by listening to the Meshenger announce port
 
       time.sleep(1)
 
-  def serve(self):
+  def nodeserve(self):
     """
-Initialize the server
+Initialize the nodeserver
 """
-    print 'Serving'
-    import meshenger_serve
-    meshenger_serve.main()
+    print 'Serving to nodes'
+    import meshenger_nodeserve
+    meshenger_nodeserve.main()
+
+  def clientserve(self):
+    """
+Initialize the clientserver
+"""
+    print 'Serving to client'
+    import meshenger_clientserve
+    meshenger_clientserve.main()
+
 
   def build_index(self):
     """
@@ -152,7 +167,7 @@ Save the time of the last update.
             index.write(message)
             index.write('\n')
         self.index_last_update = str(int(time.time()))
-        
+
         print 'Index updated:', current_index
 
         with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
@@ -223,4 +238,3 @@ if __name__ == "__main__":
   except (KeyboardInterrupt, SystemExit):
     exitapp = True
     raise
-
