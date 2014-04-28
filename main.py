@@ -15,6 +15,7 @@ class Meshenger:
   def __init__(self):
 
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
+    os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-hotspot/disable_ipv6")
     self.own_ip = self.get_ip_adress()
 
     if not os.path.exists(self.msg_dir):
