@@ -3,7 +3,7 @@ meshenger
 
 Meshenger is a Forban-inspired messaging software used for a speculative broadcast communication project. The starting point is an electronic messaging system running on a wireless mesh network. The messages propagate through the network when devices that come in contact with each other synchronize their content. It is non-hierarchical, every node receives, relays and broadcasts messages.
 
-Using Meshenger. Devices detect each other by continously broadcasting an identifier packet while listening to those of other nodes. As soon as two (or more) nodes detect each other they will try to synchronize the messages on each node.
+Using Meshenger, devices detect each other by continously broadcasting an identifier packet while listening to those of other nodes. As soon as two (or more) nodes detect each other they will try to synchronize the messages on each node.
 
 The users of the network can interface with the nodes to send or receive messages by using the webbrowser of their smartphone or computer. The messages can be received and sent at any time, but they are only synchronized in the network when other nodes are encountered. 
 
@@ -220,26 +220,9 @@ config 'rule'
 `$ /etc/init.d/firewall restart`
 `$ /etc/init.d/dnsmasq restart`
 
+Or better, restart the router with `$ reboot -f`
 
-to serve file, run uhttpd server, for example in home folder:
-`$ /usr/sbin/uhttpd -f -p 8080 -h Meshenger/msg`
-
-
-the website will be available at 192.168.2.1:8080 from meshtest network.
-
-easier is to maybe use the already running uhttpd, used by luci and change the config file?
-(to 'catch all' and 'forward all http' requests to correct folder) (/etc/httpd.conf or /etc/config/uhttpd)
-
-
-make luci work on port 81, freeing port 80 for us (or disable luci completely)
-`$ vi /etc/config/uhttpd`
-`$ /etc/init.d/uhttpd restart`
-
-this is not ideal ofcourse, but i cant get python to run on localhost port 80 and be accessible...
-
-NOTES/TODO
--maybe add extra port 80 rules in the firewall?
--disable luci? /etc/init.d/uhttpd disable
+The Meshenger webinterface is now available at http://192.168.2.1 when connected to its associated hotspot, in this case 'meshtest1'.
 
 
 
