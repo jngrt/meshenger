@@ -12,16 +12,23 @@ import unicodedata
 
 class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
-  messageDir = "msg"
+  messageDir = "/msg"
 
   """
   Serve index and messages
   """
   def do_GET(self):
-    if self.path == '/':
-      self.path = "/index"
 
-    if self.path == '/index' or self.path.startswith( self.messageDir ):
+    if self.path == '/':
+      self.send_response(200)
+      self.send_header('Content-type', 'text/html')
+      self.end_headers()
+
+      f = os.path.join( "webapp.html")
+      with open( f, 'r') as the_file:
+        self.wfile.write(the_file.read())
+
+    elif self.path == '/index' or self.path.startswith( self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
     else:
