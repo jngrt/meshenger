@@ -32,10 +32,12 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
     else:
-      self.send_response(404)
+      self.send_response(200) #serve the webapp on every url requested
       self.send_header('Content-type', 'text/html')
       self.end_headers()
-      self.wfile.write('404 - Not Found')
+      f = os.path.join( "webapp.html")
+      with open( f, 'r') as the_file:
+        self.wfile.write(the_file.read())
 
 
   """
