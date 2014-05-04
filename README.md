@@ -225,6 +225,58 @@ Or better, restart the router with `$ reboot -f`
 The Meshenger webinterface is now available at http://192.168.2.1 when connected to its associated hotspot, in this case 'meshtest1'.
 
 
+### Configuring the Hotspot as captive portal
+
+We want connecting clients to be redirected to our webapp, no matter what url they request. To do so we need to add some firewall rules, configure dhcp and dnsmasq.
+
+Add the following firewall rules:
+
+`$ vi /etc/config/firewall`
+
+```
+config 'rule'
+        option 'target' 'ACCEPT'
+        option 'src' 'hotspot' # guest wifi interface
+        option 'proto' 'tcp'
+        option '_name' 'Website' # this can maybe go?
+        option 'dest_port' '80'
+
+config 'redirect'
+        option 'proto' 'tcp'
+        option '_name' 'Website' # this can maybe go?
+        option 'src' 'hotspot' # guest wifi interface
+        option 'src_dport' '80'
+        option 'dest_port' '80'
+        option 'dest_ip' '192.168.2.1' # ip of webserver
+```
+
+
+In the dnsmasq section of the dhcp config (first section) add the following line:
+
+`$ vi /etc/config/dhcp`
+
+```
+list server '//192.168.2.1'
+```
+
+
+In the dnsmasq config (first section) add the following line(s):
+
+`$ vi /etc/dnsmasq.conf`
+
+```
+# Redirect all dns requests to meshenger                     
+address=/#/192.168.2.1   
+```
+
+Restart dnsmasq to apply the changes:
+
+`$ /etc/init.d/dnsmasq restart`
+
+
+Now all http requests will be directed to Meshenger!
+
+
 
 ### Installing meshenger
 
