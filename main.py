@@ -60,8 +60,8 @@ class Meshenger:
         print 'found', len(self.devices),'device(s)'
 
         for device in self.devices:
-          nodepath = self.ip_to_hash(device) #make a folder for the node (nodes/'hash'/)
-          nodeupdatepath = os.path.join(self.ip_to_hash(device), 'lastupdate')
+          nodepath = self.ip_to_hash_path(device) #make a folder for the node (nodes/'hash'/)
+          nodeupdatepath = os.path.join(self.ip_to_hash_path(device), 'lastupdate')
 
 
           print 'Checking age of foreign node index'
@@ -81,7 +81,7 @@ class Meshenger:
 
   def node_timestamp(self, ip):
 
-      updatepath = os.path.join(self.ip_to_hash(ip), 'lastupdate')
+      updatepath = os.path.join(self.ip_to_hash_path(ip), 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
         lastupdate.write(self.devices[ip])
       #return updatepath
@@ -112,17 +112,20 @@ Discover other devices by listening to the Meshenger announce port
     s.setblocking(0)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
+      ip = result[1][0]
 
-      if result[1][0] in self.devices and result[1][0] != self.own_ip:
-        print 'Known node', result[1][0]
-        self.devices[result[1][0]] = result[0]
-        #self.devices.append(result[1][0])
+      if os.path.exists(self.ip_to_hash_path(ip)) and ip != self.own_ip:
+        print 'Known node', ip
+        self.devices[ip] = result[0]
+        self.node_timestamp(ip) #klopt dit?
+        #self.devices.append(ip)
 
-      elif result[1][0] not in self.devices and result[1][0] != self.own_ip:
+      elif not os.path.exists(self.ip_to_hash_path(ip)) and ip != self.own_ip:
         #loop for first time
-        self.devices[result[1][0]] = result[0]
-        self.node_timestamp(result[1][0])
-        print 'New node', result[1][0]
+        self.ip_to_hash_path(ip)
+        self.devices[ip] = result[0]
+        self.node_timestamp(ip)
+        print 'New node', ip
 
 
 
@@ -156,8 +159,9 @@ Save the time of the last update.
     if not os.path.exists('index'):
       with open('index','wb') as index:
         index.write('')
-
-    previous_index = []
+      previous_index = []
+    else:
+      previous_index = open('index').readlines()
 
     while not self.exitapp:
       current_index = os.listdir(self.msg_dir)
@@ -170,8 +174,8 @@ Save the time of the last update.
 
         print 'Index updated:', current_index
 
-        with open('index_last_update', 'wb') as indexupdate: ### misschien is dit overbodig
-          indexupdate.write(str(int(time.time())))
+        with open('index_last_update', 'wb') as indexupdate: 
+          indexupdate.write(self.index_last_update) ### misschien moet dit index_last_update zijn
 
       previous_index = current_index
       time.sleep(5)
@@ -199,21 +203,26 @@ Get new messages from other node based on it's index file
     except:
       pass
 
-  def ip_to_hash(self, ip):
+  def ip_to_hash_path(self, ip):
     """
 Convert a node's ip into a hash and make a directory to store it's files
 """
     if not os.path.exists('nodes'):
       os.mkdir('nodes')
 
-    import hashlib
-    hasj = hashlib.md5(ip).hexdigest()
-    nodepath = os.path.join(os.path.abspath('nodes'), hasj)
+    nodepath = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
     if not os.path.exists(nodepath):
       os.mkdir(nodepath)
 
     return nodepath
 
+  def hasj(self, ip):
+        """
+        Convert a node's ip into a hash
+        """
+        import hashlib
+        hasj = hashlib.md5(ip).hexdigest()
+        return hasj
 
   def clientsite(self):
     a = ''
