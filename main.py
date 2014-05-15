@@ -109,7 +109,7 @@ Discover other devices by listening to the Meshenger announce port
 """
 
     print 'Discovering'
-    bufferSize = 1024 # whatever you need
+    bufferSize = 1024 # whatever you need?
 
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.bind(('::', self.announce_port))
