@@ -1,6 +1,6 @@
 -find a way to prioritize the index/message download threads. Perhaps these threads could tell other threads to pause?
 
--nodes that are new to the network don't immediately download indices from the other nodes
+SOLVED -nodes that are new to the network don't immediately download indices from the other nodes
 
 -nodes that disconnect from the network should be removed from lists of known devices
 
