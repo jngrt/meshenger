@@ -6,4 +6,5 @@ SOLVED -nodes that are new to the network don't immediately download indices fro
 
 -file deletion or time to live (client side?)
 
+-prevent WebSheet (ios) and etc captive portal to hijack the client connection ;)
 
