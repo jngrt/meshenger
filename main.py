@@ -66,7 +66,11 @@ class Meshenger:
 
           print 'Checking age of foreign node index'
           print self.devices[device], 'Foreign announce timestamp'
-          foreign_node_update = open(nodeupdatepath).read()
+          try:
+            foreign_node_update = open(nodeupdatepath).read()
+          except:
+            foreign_node_update = 0 #means it was never seen before
+            self.node_timestamp(device)
           print foreign_node_update, 'Locally stored timestamp for device'
 
 
@@ -80,8 +84,8 @@ class Meshenger:
       time.sleep(5) #free process or ctrl+c
 
   def node_timestamp(self, ip):
-
-      updatepath = os.path.join(self.ip_to_hash_path(ip), 'lastupdate')
+      nodepath = os.path.abspath('nodes', self.hasj(ip))
+      updatepath = os.path.join(nodepath, 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
         lastupdate.write(self.devices[ip])
       #return updatepath
@@ -113,14 +117,14 @@ Discover other devices by listening to the Meshenger announce port
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       ip = result[1][0]
-
-      if os.path.exists(self.ip_to_hash_path(ip)) and ip != self.own_ip:
+      node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
+      if os.path.exists(node_path) and ip != self.own_ip:
         print 'Known node', ip
         self.devices[ip] = result[0]
-        self.node_timestamp(ip) #klopt dit?
+        #self.node_timestamp(ip) #klopt dit? ##
         #self.devices.append(ip)
 
-      elif not os.path.exists(self.ip_to_hash_path(ip)) and ip != self.own_ip:
+      elif not os.path.exists(node_path) and ip != self.own_ip: 
         #loop for first time
         self.ip_to_hash_path(ip)
         self.devices[ip] = result[0]
