@@ -7,3 +7,10 @@
 -file deletion or time to live (client side?)
 
 
+# Cryptoshit
+
+encrypt / decrypt:
+http://www.davedoesdev.com/a-simple-and-consistent-wrapper-for-javascript-crypto/
+
+generating keys:
+https://bitbucket.org/adrianpasternak/js-rsa-pem/wiki/Home
