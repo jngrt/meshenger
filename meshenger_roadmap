@@ -6,4 +6,12 @@ SOLVED -nodes that are new to the network don't immediately download indices fro
 
 -file deletion or time to live (client side?)
 
+-prevent WebSheet (ios) and etc captive portal to hijack the client connection ;)
 
+# Cryptoshit
+
+encrypt / decrypt:
+http://www.davedoesdev.com/a-simple-and-consistent-wrapper-for-javascript-crypto/
+
+generating keys:
+https://bitbucket.org/adrianpasternak/js-rsa-pem/wiki/Home
