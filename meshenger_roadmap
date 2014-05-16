@@ -1,12 +1,11 @@
 -find a way to prioritize the index/message download threads. Perhaps these threads could tell other threads to pause?
-
-SOLVED -nodes that are new to the network don't immediately download indices from the other nodes
-
--nodes that disconnect from the network should be removed from lists of known devices
+	the discover -> age check -> index -> messages -> timestamp script should not be interrupted when one of the steps takes longer
 
 -file deletion or time to live (client side?)
 
 -prevent WebSheet (ios) and etc captive portal to hijack the client connection ;)
+
+-perhaps replace the functionality of self.devices with something based on crawling nodes/hash/
 
 # Cryptoshit
 
