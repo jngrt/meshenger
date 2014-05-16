@@ -9,7 +9,7 @@ class Meshenger:
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
-  index_last_update = str(time.time())
+  index_last_update = str(int(time.time()))
 
   def __init__(self):
 
@@ -70,21 +70,21 @@ class Meshenger:
             foreign_node_update = open(nodeupdatepath).read()
           except:
             foreign_node_update = 0 #means it was never seen before
-            self.node_timestamp(device)
+
           print foreign_node_update, 'Locally stored timestamp for device'
 
 
           if self.devices[device] > foreign_node_update:
             print 'Foreign node"s index is newer, proceed to download index'
             self.get_index(device, nodepath)
-            self.node_timestamp(device)
             print 'downloading messages'
             self.get_messages(device, nodepath)
+            self.node_timestamp(device)
 
       time.sleep(5) #free process or ctrl+c
 
   def node_timestamp(self, ip):
-      nodepath = os.path.abspath('nodes', self.hasj(ip))
+      nodepath = os.path.abspath(os.path.join('nodes', self.hasj(ip)))
       updatepath = os.path.join(nodepath, 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
         lastupdate.write(self.devices[ip])
@@ -117,20 +117,19 @@ Discover other devices by listening to the Meshenger announce port
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       ip = result[1][0]
+      print ip, "*"*45
       node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
-      if os.path.exists(node_path) and ip != self.own_ip:
-        print 'Known node', ip
-        self.devices[ip] = result[0]
-        #self.node_timestamp(ip) #klopt dit? ##
-        #self.devices.append(ip)
 
-      elif not os.path.exists(node_path) and ip != self.own_ip: 
+      if not os.path.exists(node_path) and ip != self.own_ip: 
         #loop for first time
-        self.ip_to_hash_path(ip)
+        self.ip_to_hash_path(ip) #make a folder /nodes/hash
         self.devices[ip] = result[0]
-        self.node_timestamp(ip)
+        #self.node_timestamp(ip) #make a local copy of the timestamp in /nodes/hash/updatetimestamp
         print 'New node', ip
 
+      elif os.path.exists(node_path) and ip != self.own_ip:
+        print 'Known node', ip
+        self.devices[ip] = result[0]
 
 
       time.sleep(1)
@@ -205,6 +204,7 @@ Get new messages from other node based on it's index file
             print 'downloading', message, 'to', messagepath
             os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)
     except:
+      print 'Failed to download messages'
       pass
 
   def ip_to_hash_path(self, ip):
@@ -227,11 +227,6 @@ Convert a node's ip into a hash and make a directory to store it's files
         import hashlib
         hasj = hashlib.md5(ip).hexdigest()
         return hasj
-
-  def clientsite(self):
-    a = ''
-
-    #tools
 
   def get_ip_adress(self):
     """
