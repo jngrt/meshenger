@@ -13,7 +13,7 @@
 - /msg/<uid> -> give list of all messages for this uid
 - /msg/<uid>/<timestamp> -> get message for this timestamp
 - /clients -> return list of all known clients (uid's + usernames)
-- /getUID -> return uid for client ( based on what? mac? )
+- /getUID -> return uid for client ( unique id based on what? mac address? )
 
 # Cryptoshit
 

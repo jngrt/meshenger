@@ -237,7 +237,6 @@ Download the indices from other nodes.
     command = 'wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index')
     print 'get_index: ', command
     status = subprocess.call( command, shell=True )
-    print 'get_index wget status: ', status
     return status == 0
 
   def get_messages(self, ip, path ):
@@ -250,7 +249,6 @@ Get new messages from other node based on it's index file
       with open(os.path.join(path,'index')) as index:
         index = index.read().split('\n')
         for message in index:
-          # messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
           parts = message.split('/')
           dirpath = os.path.join( parts[0], parts[1])
           if not os.path.isdir( dirpath ):
@@ -260,10 +258,11 @@ Get new messages from other node based on it's index file
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
             command = 'wget http://['+ip+'%adhoc0]:' + self.serve_port + '/' + message+' -O ' + messagepath
-            print command
             status = subprocess.call( command, shell=True)
-            print 'get_messages wget status: ', status
-            return status == 0
+            if status != 0:
+              return False
+        # succesfuly downloaded all messages, return true
+        return True
     except:
       print 'Failed to download messages'
       return False
