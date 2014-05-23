@@ -76,17 +76,16 @@ class Meshenger:
 
           if self.devices[device] > foreign_node_update:
             print 'Foreign node"s index is newer, proceed to download index'
-            status = self.get_index(device, nodepath)
-            if not status:
+            if not self.get_index(device, nodepath):
               print 'index wget failed'
               continue
 
             print 'downloading messages'
-            status = self.get_messages(device, nodepath)
-            if not status:
+            if not self.get_messages(device, nodepath):
               print 'getting messages failed'
               continue
 
+            print 'updating node timestamp'
             self.node_timestamp(device)
 
       time.sleep(5) #free process or ctrl+c
@@ -252,10 +251,18 @@ Get new messages from other node based on it's index file
         index = index.read().split('\n')
         for message in index:
           # messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
+          parts = message.split('/')
+          dirpath = os.path.join( parts[0], parts[1])
+          if not os.path.isdir( dirpath ):
+            os.mkdir( dirpath )
+
           messagepath = os.path.relpath( message )
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
-            status = subprocess.call('wget http://['+ip+'%adhoc0]:' + self.serve_port + '/' + message+' -O ' + messagepath, shell=True)
+            command = 'wget http://['+ip+'%adhoc0]:' + self.serve_port + '/' + message+' -O ' + messagepath
+            print command
+            status = subprocess.call( command, shell=True)
+            print 'get_messages wget status: ', status
             return status == 0
     except:
       print 'Failed to download messages'
