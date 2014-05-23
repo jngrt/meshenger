@@ -19,15 +19,13 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   """
   def do_GET(self):
 
-    if self.path == '/':
-      self.send_response(200)
-      self.send_header('Content-type', 'text/html')
-      self.end_headers()
-
-      f = os.path.join( "webapp.html")
-      with open( f, 'r') as the_file:
-        self.wfile.write(the_file.read())
-
+    if self.path.startswith( '/'+self.messageDir ):
+      parts = self.path.split('/');
+      if len( parts ) == 2:
+        
+        self.wfile.write('give index')
+      elif len( parts ) == 3:
+        self.wfile.write('give msg')
     elif self.path == '/index' or self.path.startswith( "/"+self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 

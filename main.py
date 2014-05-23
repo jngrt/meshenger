@@ -121,7 +121,7 @@ Discover other devices by listening to the Meshenger announce port
       node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
 
       if not os.path.exists(node_path) and ip != self.own_ip: 
-        #loop for first time
+        #loop for first timef
         self.ip_to_hash_path(ip) #make a folder /nodes/hash
         self.devices[ip] = result[0]
         #self.node_timestamp(ip) #make a local copy of the timestamp in /nodes/hash/updatetimestamp
@@ -157,6 +157,37 @@ Make an index file of all the messages present on the node.
 Save the time of the last update.
 """
 
+
+    index_file = os.path.relpath( 'index' )
+    previous_index = []
+    if os.path.exists( index_file ):
+      previous_index = open( index_file ).read().split()
+
+    while not self.exitapp:
+
+      current_index = []
+      for root, folders, files in os.walk( self.msg_dir ):
+        if root == 'msg':
+          folders.sort()
+        else:
+          files.sort()
+          current_index += [root + '/' + f for f in files]
+
+      if current_index != previous_index:
+        with open( index_file, 'w' ) as f:
+          f.write( '\n'.join( current_index ))
+
+        self.index_last_update = str( int( time.time()))
+        print 'Index updated:', current_index
+
+        with open( os.path.relpath('index_last_update'), 'w') as f:
+          f.write( self.index_last_update )
+
+        previous_index = current_index
+
+      time.sleep( 5 )
+
+    """
     print 'Building own index for the first time\n'
 
     if not os.path.exists('index'):
@@ -176,12 +207,12 @@ Save the time of the last update.
         self.index_last_update = str(int(time.time()))
 
         print 'Index updated:', current_index
-
         with open('index_last_update', 'wb') as indexupdate: 
           indexupdate.write(self.index_last_update) ### misschien moet dit index_last_update zijn
 
       previous_index = current_index
       time.sleep(5)
+      """
 
   def get_index(self,ip, path):
     """
@@ -191,15 +222,18 @@ Download the indices from other nodes.
     os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 
 
-  def get_messages(self, ip, path):
+  def get_messages(self, ip, path ):
     """
 Get new messages from other node based on it's index file
 """
+
+
     try:
       with open(os.path.join(path,'index')) as index:
         index = index.read().split('\n')
         for message in index:
-          messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
+          # messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
+          messagepath = os.path.join( self.msg_dir, message )
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
             os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)

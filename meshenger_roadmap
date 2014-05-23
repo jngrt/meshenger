@@ -7,6 +7,12 @@
 
 -perhaps replace the functionality of self.devices with something based on crawling nodes/hash/
 
+- HTTP calls the client needs:
+- /msg/<uid> -> give list of all messages for this uid
+- /msg/<uid>/<timestamp>.json -> get message for this timestamp
+- /clients -> return list of all known clients (uid's + usernames)
+- /getUID -> return uid for client ( based on what? mac? )
+
 # Cryptoshit
 
 encrypt / decrypt:
@@ -14,3 +20,5 @@ http://www.davedoesdev.com/a-simple-and-consistent-wrapper-for-javascript-crypto
 
 generating keys:
 https://bitbucket.org/adrianpasternak/js-rsa-pem/wiki/Home
+
+
