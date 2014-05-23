@@ -9,7 +9,7 @@ class Meshenger:
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
-  index_last_update = str(int(time.time()))
+  index_last_update = "0" #str(int(time.time()))
 
   def __init__(self):
 
@@ -160,8 +160,15 @@ Save the time of the last update.
 
     index_file = os.path.relpath( 'index' )
     previous_index = []
-    if os.path.exists( index_file ):
+    if not os.path.exists( index_file ):
+      with open('index','wb') as index:
+        index.write('')
+    else:
       previous_index = open( index_file ).read().split()
+
+    index_last_update_file = os.path.relpath( 'index_last_update' )
+    if os.path.exists( index_last_update_file ):
+      self.index_last_update = open( index_last_update_file ).read()
 
     while not self.exitapp:
 
@@ -218,7 +225,7 @@ Save the time of the last update.
     """
 Download the indices from other nodes.
 """
-
+    time.sleep(0) # hack to prevent wget bug
     os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 
 
@@ -236,7 +243,7 @@ Get new messages from other node based on it's index file
           messagepath = os.path.join( self.msg_dir, message )
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
-            os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)
+            os.system('wget http://['+ip+'%adhoc0]:' + self.serve_port + '/' + message+' -O ' + messagepath)
     except:
       print 'Failed to download messages'
       pass
