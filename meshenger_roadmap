@@ -7,9 +7,11 @@
 
 -perhaps replace the functionality of self.devices with something based on crawling nodes/hash/
 
+-sometimes node tries to connect to itself (something wrong with receiving broadcast maybe??)
+
 - HTTP calls the client needs:
 - /msg/<uid> -> give list of all messages for this uid
-- /msg/<uid>/<timestamp>.json -> get message for this timestamp
+- /msg/<uid>/<timestamp> -> get message for this timestamp
 - /clients -> return list of all known clients (uid's + usernames)
 - /getUID -> return uid for client ( based on what? mac? )
 

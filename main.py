@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket, os, time, select, urllib, sys, threading
+import socket, os, time, select, urllib, sys, threading, subprocess
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
@@ -76,10 +76,13 @@ class Meshenger:
 
           if self.devices[device] > foreign_node_update:
             print 'Foreign node"s index is newer, proceed to download index'
-            self.get_index(device, nodepath)
-            print 'downloading messages'
-            self.get_messages(device, nodepath)
-            self.node_timestamp(device)
+            status = self.get_index(device, nodepath)
+            if status:
+              print 'downloading messages'
+              self.get_messages(device, nodepath)
+              self.node_timestamp(device)
+            else:
+              print 'wget failed'
 
       time.sleep(5) #free process or ctrl+c
 
@@ -225,9 +228,13 @@ Save the time of the last update.
     """
 Download the indices from other nodes.
 """
-    time.sleep(0) # hack to prevent wget bug
-    os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
-
+    # time.sleep(0) # hack to prevent wget bug
+    # os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
+    command = 'wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index')
+    print 'get_index: ', command
+    status = subprocess.call( command, shell=True )
+    print 'get_index wget status: ', status
+    return status == 0
 
   def get_messages(self, ip, path ):
     """
