@@ -59,7 +59,7 @@ class Meshenger:
       if len(self.devices) > 0:
         print 'found', len(self.devices),'device(s)'
 
-        for device in self.devices:
+        for device in self.devices.keys():
           nodepath = self.ip_to_hash_path(device) #make a folder for the node (nodes/'hash'/)
           nodeupdatepath = os.path.join(self.ip_to_hash_path(device), 'lastupdate')
 
