@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import socket, os, time, select, urllib, sys, threading
+from multiprocessing import Process
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
@@ -15,7 +16,7 @@ class Meshenger:
 
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-hotspot/disable_ipv6")
-    self.own_ip = self.get_ip_adress()
+    self.own_ip = self.get_ip_adress().strip()
 
     if not os.path.exists(self.msg_dir):
       os.mkdir(self.msg_dir)
@@ -30,7 +31,7 @@ class Meshenger:
       a.daemon = True
       a.start()
 
-      n = threading.Thread(target=self.nodeserve)
+      n = Process(target=self.nodeserve)
       n.daemon = True
       n.start()
 
@@ -60,6 +61,7 @@ class Meshenger:
         print 'found', len(self.devices),'device(s)'
 
         for device in self.devices.keys():
+
           nodepath = self.ip_to_hash_path(device) #make a folder for the node (nodes/'hash'/)
           nodeupdatepath = os.path.join(self.ip_to_hash_path(device), 'lastupdate')
 
@@ -112,13 +114,16 @@ Discover other devices by listening to the Meshenger announce port
     bufferSize = 1024 # whatever you need?
 
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
     s.bind(('::', self.announce_port))
     s.setblocking(0)
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
+
       ip = result[1][0]
       print ip, "*"*45
       node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
+
 
       if not os.path.exists(node_path) and ip != self.own_ip: 
         #loop for first time
@@ -130,7 +135,6 @@ Discover other devices by listening to the Meshenger announce port
       elif os.path.exists(node_path) and ip != self.own_ip:
         print 'Known node', ip
         self.devices[ip] = result[0]
-
 
       time.sleep(1)
 
@@ -199,6 +203,7 @@ Get new messages from other node based on it's index file
       with open(os.path.join(path,'index')) as index:
         index = index.read().split('\n')
         for message in index:
+
           messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
@@ -233,7 +238,8 @@ Convert a node's ip into a hash and make a directory to store it's files
 Hack to adhoc0's inet6 adress
 """
     if not os.path.isfile('interfaceip6adress'):
-      os.system('ifconfig -a adhoc0 | grep inet6 > /root/meshenger/interfaceip6adress')
+#changed to wlan for unexplainable reasons (god)
+      os.system('ifconfig -a wlan0 | grep inet6 > /root/meshenger/interfaceip6adress')
     with open('interfaceip6adress', 'r') as a:
       return a.read().split()[2].split('/')[0]
 

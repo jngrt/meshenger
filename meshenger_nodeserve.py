@@ -4,10 +4,20 @@ import logging
 import cgi
 import os
 import socket
-from BaseHTTPServer import HTTPServer
+import BaseHTTPServer
 import SimpleHTTPServer
 import urlparse
 
+#GOTTMITTUNS
+
+def _bare_address_string(self):
+    host, port = self.client_address[:2]
+    return '%s' % host
+
+BaseHTTPServer.BaseHTTPRequestHandler.address_string = \
+        _bare_address_string
+
+#END
 
 class NodeServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
@@ -29,7 +39,7 @@ class NodeServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.end_headers()
       self.wfile.write('404 - Not Found')
 
-class HTTPServerV6(HTTPServer):
+class HTTPServerV6(BaseHTTPServer.HTTPServer):
   address_family = socket.AF_INET6
 
 class NodeServe():
