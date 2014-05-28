@@ -1,4 +1,3 @@
-
 config wifi-iface	'wmesh'
 	option device 	'radio0'
 	option ifname	'adhoc0'
@@ -6,3 +5,11 @@ config wifi-iface	'wmesh'
 	option mode		'adhoc'
 	option ssid		'mesh'          
 	option bssid	'66:66:66:66:66:66'
+
+config wifi-iface                       
+        option 'device' 'radio0'  #use your excisting wifi device, look in the list above.    
+        option 'ssid' 'meshenger_node'  #use a unique name for your network?
+        option 'network' 'hotspot'      
+        option 'mode' 'ap'              
+        option 'encryption' 'none'
+        option 'isolate' '1'  

@@ -10,9 +10,17 @@ swapon /dev/sda2
 
 mv fstab_extroot /etc/config/fstab
 
+echo 'Configuring wireless and hotspot'
+
 head -n 10 /etc/config/wireless >> tmp_wireless
 cat wireless >> tmp_wireless
 mv tmp_wireless /etc/config/wireless
+
+mv firewall /etc/config/firewall
+
+mv dhcp /etc/config/dhcp
+
+echo "address=/#/192.168.2.1 " >> /etc/dnsmasq.conf
 
 sleep 1
 
@@ -27,6 +35,8 @@ sleep 1
 git clone git://github.com/jngrt/meshenger.git
 
 mv uhttpd /etc/config/uhttpd
+
+mv meshenger /etc/init.d/meshenger
 
 echo 'my ip address is:' #klopt nog niet
 ifconfig  br-lan | grep 'inet addr'

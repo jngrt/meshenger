@@ -18,3 +18,9 @@ config interface 'mesh'
         option mtu      '1528'
         option proto    'none'
 
+config interface 'hotspot'    
+        option 'iface' 'radio0' #use your existing wifi device (look in config/wireless below)
+        option 'proto' 'static'
+        option 'ipaddr' '192.168.2.1'
+        option 'netmask' '255.255.255.0'
+        option 'type' 'bridge'  

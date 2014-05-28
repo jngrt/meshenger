@@ -1,0 +1,34 @@
+config 'zone'                                          
+        option 'name' 'hotspot'                        
+        option 'input' 'ACCEPT'                        
+        option 'forward' 'ACCEPT' #was REJECT                      
+        option  'output' 'ACCEPT'                      
+
+config 'rule'                                     
+
+        option 'src' 'hotspot'                         
+        option 'dest_port' '53'                        
+        option 'proto' 'tcpudp'                        
+        option 'target' 'ACCEPT'                       
+
+config 'rule'                                          
+        option 'src' 'hotspot'                         
+        option 'src_port' '67-68'                      
+        option 'dest_port' '67-68'                     
+        option 'proto' 'udp'                           
+        option 'target' 'ACCEPT'
+
+config 'rule'
+        option 'target' 'ACCEPT'
+        option 'src' 'hotspot' # guest wifi interface
+        option 'proto' 'tcp'
+        option '_name' 'Website' # this can maybe go?
+        option 'dest_port' '80'
+
+config 'redirect'
+        option 'proto' 'tcp'
+        option '_name' 'Website' # this can maybe go?
+        option 'src' 'hotspot' # guest wifi interface
+        option 'src_dport' '80'
+        option 'dest_port' '80'
+        option 'dest_ip' '192.168.2.1' # ip of webserver
