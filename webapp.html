@@ -105,7 +105,7 @@ text-shadow: 1px 1px orange;
 		</div>
 
 		<div id="fixedDiv">
-			<textarea id="name" rows="1" style="width:100%"  placeholder="Your Name"></textarea>
+			<textarea id="name" rows="1" style="width:100%"  placeholder="Your Name (leave empty for anonymous)"></textarea>
 			<textarea id="message" rows="3" style="width:100%"  placeholder="Your Message"></textarea>
 			<button style="width:100%" id="send">Send</button>
 		</div>
@@ -124,7 +124,14 @@ text-shadow: 1px 1px orange;
 document.getElementById( 'send' ).onclick = function() {
 
 	var outStr = localStorage.getItem( 'outbox' ) || '';
-	outStr += new Date().getTime() + ' ' + document.getElementById('name').value + '///' + document.getElementById('message').value + '\n';
+	if (document.getElementById('name').value == ""){
+	var namm= "anonymous";
+	}	
+	else{
+	var namm= document.getElementById('name').value;
+	}
+	
+	outStr += new Date().getTime() + ' ' + namm + '///' + document.getElementById('message').value + '\n';
 	localStorage.setItem( 'outbox', outStr );
 	updateOutboxView();
 	checkOutbox();
@@ -228,7 +235,7 @@ function updateInboxView() {
 	if ( localStorage.key(i).length === 0 || element === 'outbox' ) {
 		continue;
 	}
-	localStorageArray[i] = { time:localStorage.key(i), content:elesplit[0] };
+	localStorageArray[i] = { time:localStorage.key(i), user:elesplit[0], message:elesplit[1] };
 	}
 	}
 	orderStorage = localStorageArray.sort(function(a,b) { return b.time - a.time } );
@@ -241,8 +248,7 @@ function updateInboxView() {
 		var date = new Date(parseInt(orderStorage[i].time));
 //		date.setHours(date.getHours() + 2); 
 		var datereadable = date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes();
-		element=orderStorage[i].content.split('///');
-		contentString += '<li><b>' + datereadable + ' </b>' + ' <i>'+ element[0] +'</i><br/> '+ element[1]+'</li>';
+		contentString += '<li><b>' + datereadable + ' </b>' + ' <i>'+ orderStorage[i].user +'</i><br/> '+orderStorage[i].message+'</li>';
 	}
 	document.getElementById( 'inbox' ).innerHTML = contentString;
 }
