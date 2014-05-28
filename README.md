@@ -284,17 +284,19 @@ Create a file in `$ /etc/init.d/` called meshenger and paste the script below:
 #!/bin/sh /etc/rc.common
 #meshenger startup script
 
-START=10
-STOP=15
+START=101
+#STOP=15
 
 start() {
-	echo starting Meshenger
-	python ~/meshenger/main.py &
+    echo 'starting Meshenger'
+    /usr/bin/python /root/meshenger/main.py &
 }
 
 stop() {
-	killall python
+    echo 'Killing Meshenger'
+    killall python
 }
+
 ```
 
 Make the file executable

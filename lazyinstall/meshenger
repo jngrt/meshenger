@@ -1,16 +1,15 @@
 #!/bin/sh /etc/rc.common
 #meshenger startup script
 
-START=10
-STOP=15
+START=101
+#STOP=15
 
 start() {
     echo 'starting Meshenger'
-    python ~/meshenger/main.py &
+    /usr/bin/python /root/meshenger/main.py &
 }
 
 stop() {
     echo 'Killing Meshenger'
     killall python
 }
-
