@@ -274,7 +274,7 @@ Restart dnsmasq to apply the changes:
 `$ /etc/init.d/dnsmasq restart`
 
 
-Now all http requests will be directed to Meshenger!
+Now all http requests will be directed to Meshenger! If it doesn't work, check your DNS settings of the client your're using (aka your computer, phone, fapfapfaplet). Make sure google's 8.8.8.8 is not there and set 192.168.2.1 as the dns server.
 
 ### Run meshenger on boot
 
