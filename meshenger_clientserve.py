@@ -24,7 +24,7 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.send_header('Content-type', 'text/html')
       self.end_headers()
 
-      f = os.path.join( "webapp.html")
+      f = os.path.join('/home/root/meshenger/',"webapp.html")
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
 

@@ -16,7 +16,7 @@ head -n 10 /etc/config/wireless >> tmp_wireless
 cat wireless >> tmp_wireless
 mv tmp_wireless /etc/config/wireless
 
-cat firewall >> /etc/config/firewall
+cat firewall >>ls /etc/config/firewall
 
 mv dhcp /etc/config/dhcp
 

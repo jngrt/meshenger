@@ -15,6 +15,9 @@ class Meshenger:
 
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-hotspot/disable_ipv6")
+
+    os.chdir(os.path.dirname(__file__)) # change present working directory to the one where this file is
+    
     self.own_ip = self.get_ip_adress().strip()
 
     if not os.path.exists(self.msg_dir):
@@ -234,7 +237,7 @@ Hack to adhoc0's inet6 adress
 """
     if not os.path.isfile('interfaceip6adress'):
       os.system('ifconfig -a adhoc0 | grep inet6 > /root/meshenger/interfaceip6adress')
-    with open('interfaceip6adress', 'r') as a:
+    with open('/root/meshenger/interfaceip6adress', 'r') as a:
       return a.read().split()[2].split('/')[0]
 
 
