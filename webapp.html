@@ -7,12 +7,40 @@
 		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta name="viewport" content="width=device-width, user-scalable=no">
+
+		<style>
+		body{font-family:Helvetica, Arial, sans-seriff; }
+
+		textarea{
+		  -webkit-appearance: none; -moz-appearance: none;
+		  display: block;
+		  margin: 0;
+		  width: 100%; height: 50px;
+		  line-height: 40px; font-size: 17px;
+		  border: 1px solid #bbb;
+		}
+		 button {
+		 -webkit-appearance: none; -moz-appearance: none;
+		 display: block;
+		 margin: 1.5em 0;
+		 font-size: 1em; line-height: 2.5em;
+		 color: #333;
+		 font-weight: bold;
+		 height: 2.5em; width: 100%;
+		 background: #fdfdfd; background: -moz-linear-gradient(top, #fdfdfd 0%, #bebebe 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fdfdfd), color-stop(100%,#bebebe)); background: -webkit-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: -o-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: -ms-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: linear-gradient(to bottom, #fdfdfd 0%,#bebebe 100%);
+		 border: 1px solid #bbb;
+		 -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;
+		}
+
+		</style>
+
+
 		<title>meshed up</title>
 	</head>
 
 	<body>
 		<h2>message</h2>
-		<textarea id="message" rows="3" style="width:100%"></textarea>
+		<textarea id="message" rows="3" style="width:100%"  placeholder="Enter your message"></textarea>
 		<button style="width:100%" id="send">Send</button>
 		<h2>outbox</h2>
 		<ul id="outbox"></ul>
