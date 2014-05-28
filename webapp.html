@@ -114,7 +114,6 @@ function doStuffForEach( entriesString, stuffFunction ) {
  * INBOX STUFF
  */
 function updateInboxView() {
-localStorage.clear();
 	var contentString = '';
 	for(var i in localStorage)
 	{
@@ -133,21 +132,20 @@ function onMessageDownload( msg, filename ) {
 	updateInboxView();
 }
 function onIndex( index ) {
+        var lines = index.split( /\n/ );
 
-/* NON  WORKING MOD
 	for(var k in localStorage){
 		var l = 1;
 		for ( var i in lines ) {
-			if (i == k){ l = 0; }
+			var f = lines[i];
+			if (f == k){ l = 0; }
 		}
 	if (l == 1){ 
 	localStorage.removeItem(k);
 	}
 	}
 updateInboxView();
-*/
 
-	var lines = index.split( /\n/ );
 	for ( var i in lines ) {
 		var fname = lines[i];
 		if ( localStorage.getItem( fname ) === null ) {
