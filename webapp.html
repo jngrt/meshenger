@@ -144,16 +144,12 @@ document.getElementById( 'send' ).onclick = function() {
 	else{
 	var namm= document.getElementById('name').value;
 	}
-	
-	outStr += new Date().getTime() + ' ' + namm + '///' + document.getElementById('message').value + '\n';
+	var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
+	outStr += new Date().getTime() + ' ' + namm + '///' + mess + '\n';
 	localStorage.setItem( 'outbox', outStr );
 	updateOutboxView();
 	checkOutbox();
 	document.getElementById('message').value = '';
-	//localStorage.setItem(
-	//	new Date().getTime(),
-	//	document.getElementById('message').value );
-	//updateList();
 };
 function checkOutbox() {
 	var outStr = localStorage.getItem( 'outbox' );
