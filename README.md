@@ -276,6 +276,37 @@ Restart dnsmasq to apply the changes:
 
 Now all http requests will be directed to Meshenger!
 
+### Run meshenger on boot
+
+Create a file in `$ /etc/init.d/` called meshenger and paste the script below:
+
+```
+#!/bin/sh /etc/rc.common
+#meshenger startup script
+
+START=10
+STOP=15
+
+start() {
+	echo starting Meshenger
+	python ~/meshenger/main.py &
+}
+
+stop() {
+	killall python
+}
+```
+
+Make the file executable
+
+`$ chmod a+x /etc/init.d/meshenger`
+
+Now you can start/stop meshenger as a service, to enable the meshenger as srevice on boot run
+
+`$ /etc/init.d/meshenger enable` 
+
+To start/stop/disable replace 'enable' with start, stop or disable.
+
 
 
 ### Installing meshenger
