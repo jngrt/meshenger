@@ -27,7 +27,7 @@
 document.getElementById( 'send' ).onclick = function() {
 
 	var outStr = localStorage.getItem( 'outbox' ) || '';
-	outStr += new Date().getTime() + ' ' + document.getElementById('message').value + '\n';
+	outStr += new Date().getTime() + ' ' + document.getElementById('name').value + '///' + document.getElementById('message').value + '\n';
 	localStorage.setItem( 'outbox', outStr );
 	updateOutboxView();
 	checkOutbox();
@@ -113,14 +113,39 @@ function doStuffForEach( entriesString, stuffFunction ) {
 /*
  * INBOX STUFF
  */
+
+
+
 function updateInboxView() {
+	var localStorageArray = new Array();
 	var contentString = '';
-	for(var i in localStorage)
+
+	if (localStorage.length>0) {
+	for (i=0;i<localStorage.length;i++){
+
+
+	element=localStorage.getItem(localStorage.key(i))
+
+	elesplit=element.split('///');
+
+	if ( localStorage.key(i).length === 0 || element === 'outbox' ) {
+		continue;
+	}
+	localStorageArray[i] = { time:localStorage.key(i), content:elesplit[0] };
+	}
+	}
+	orderStorage = localStorageArray.sort(function(a,b) { return b.time - a.time } );
+
+	for(var i in orderStorage)
 	{
 		if ( i.length === 0 || i === 'outbox' ) {
 			continue;
 		}
-		contentString += '<li><b>' + i + ' </b>' + localStorage[i] + '</li>';
+		var date = new Date(parseInt(orderStorage[i].time));
+//		date.setHours(date.getHours() + 2); 
+		var datereadable = date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes();
+		element=orderStorage[i].content.split('///');
+		contentString += '<li><b>' + datereadable + ' </b>' + ' <i>'+ element[0] +'</i><br/> '+ element[1]+'</li>';
 	}
 	document.getElementById( 'inbox' ).innerHTML = contentString;
 }
