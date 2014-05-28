@@ -16,7 +16,7 @@ head -n 10 /etc/config/wireless >> tmp_wireless
 cat wireless >> tmp_wireless
 mv tmp_wireless /etc/config/wireless
 
-mv firewall /etc/config/firewall
+cat firewall >> /etc/config/firewall
 
 mv dhcp /etc/config/dhcp
 
@@ -32,7 +32,7 @@ sed -i -e "s/option 'interfaces' 'mesh'/option 'interfaces' 'adhoc0'/g" /etc/con
 
 opkg install python git
 sleep 1
-git clone git://github.com/jngrt/meshenger.git
+git clone git://github.com/jngrt/meshenger.git /meshenger
 
 mv uhttpd /etc/config/uhttpd
 
