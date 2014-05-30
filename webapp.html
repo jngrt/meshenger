@@ -48,6 +48,21 @@
    		 font-size: inherit;
    		 font-size: 20px;
 		}
+
+		select{
+			width:100%;
+		 display: block;
+   		 margin-left: auto;
+   		 margin-right: auto;
+		 margin: 1.5em 0;
+		 font-family: inherit;
+   		 font-size: inherit;
+   		 font-size: 20px;
+
+		}
+	
+
+
 		h2{
 		font-size: 40px;
 		}
@@ -122,6 +137,11 @@
 			<textarea id="message" rows="3"  placeholder="Your Message"></textarea>
 			<button style="width:100%" id="send">Send</button>
 			
+			<select id="messagesort" name="messageSort">
+			<option value="dateReceived">Sort by Date Received</option>
+			<option value="dateSend">Sort by Date Send</option>
+			
+</select>
 		
 		
 		<ul id="inbox"></ul>
