@@ -86,7 +86,7 @@ Edit fstab again now make the swap look like this:
 ```
 config mount
 	option device   /dev/sda2
-	option enabled
+	option enabled 1
 ```
 ### Wireless configuration
 
