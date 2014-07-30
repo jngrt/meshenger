@@ -291,14 +291,14 @@ Get the dependencies and clone the git
 To launch the Meshenger script (or python script in this case), we have to run it as a 'Service'.
 Befor we can do so we need to know some variable.
 
-# Path to python
+#### Path to python
 Find out where your Python binary is located:
 
 ```$ which python```
 
 This command outputs your path, for example: ` /usr/bin/python`, remember this path
 
-# Boot order
+#### Boot order
 Alot of processes are started at boot, and we want to make sure our script runs after the system has booted completely. To find out the boot order, look in the rc.d folder:
 
 ```$ ls /etc/rc.d```
@@ -306,7 +306,7 @@ Alot of processes are started at boot, and we want to make sure our script runs 
 This will output a list of startup sctipts with prefixes like S10-, S20-, S30-. The numbers define the boot order, the higher, the later. Remember the highest 'S'(cript) number. We need to run our script after the last one.
 
 
-# Startup script
+#### Startup script
 Create a new file in `/etc/init.d/`
 
 ```$ vi /etc/init.d/meshenger```
@@ -343,7 +343,7 @@ Make sure both your script (main.py) and the init.d script are executable!
 
 
 
-# Enabling the service
+#### Enabling the service
 Now we have to activate the script we just pasted and make it run as service, on every (re)boot.
 
 ```$ /etc/init.d/meshenger enable```
