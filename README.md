@@ -410,5 +410,5 @@ option 'GatewayPorts' 'on'
 $ /etc/init.d/dropbear restart
 
 ```
-Now you can acces your router, via ssh, from the internet.
+Now you can acces your router, via ssh, from the internet. Don't forget to add portforwarding on you're modem/router!
 Next up, http access from the internet!
