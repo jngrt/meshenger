@@ -354,3 +354,44 @@ This creates a symlink in `/etc/rc.d` with the boot order number prefix you prov
 ```$ /etc/init.d/meshenger stop```
 
 That's all, reboot and see if it works ( `$ ps | grep python` )!
+
+
+
+### SSH Access from Internet (wan) 
+
+If you want, you can hook your box up to the internet and manage it remotely. This is not in the scope of this project but I'll share the steps with you:
+
+#### Configure your firewall
+
+
+```
+$ vi /etc/config/firewall
+
+
+config 'rule'
+  option 'src' 'wan'
+  option 'dest_port' '22'
+  option 'target' 'ACCEPT'
+  option 'proto' 'tcp' 
+  
+  
+$ /etc/init.d/firewall restart
+
+```
+
+#### Configure open ssh service
+
+Add the line below in your dropbear config
+
+```
+$ vi /etc/config/dropbear
+
+
+option 'GatewayPorts' 'on'
+  
+  
+$ /etc/init.d/dropbear restart
+
+```
+Now you can acces your router, via ssh, from the internet.
+Next up, http access from the internet!
