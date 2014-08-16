@@ -379,6 +379,23 @@ $ /etc/init.d/firewall restart
 
 ```
 
+Enable user iptable script:
+
+
+```
+$ vi  vi /etc/firewall.user 
+
+
+iptables -t nat -A prerouting_wan -p tcp --dport 22 -j ACCEPT
+iptables        -A input_wan      -p tcp --dport 22 -j ACCEPT
+ 
+  
+  
+$ /etc/init.d/firewall restart
+
+```
+ 
+
 #### Configure open ssh service
 
 Add the line below in your dropbear config
