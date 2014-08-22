@@ -412,3 +412,45 @@ $ /etc/init.d/dropbear restart
 ```
 Now you can acces your router, via ssh, from the internet. Don't forget to add portforwarding on you're modem/router!
 Next up, http access from the internet!
+
+
+### HTTP Access from Internet (wan) 
+
+If you want, you can host Meshenger or your own homepage on the internet. This is not in the scope of this project but I'll share the steps with you:
+
+#### Configure your firewall
+
+Add the following lines in your firewall config, and restart the firewall:
+
+
+```
+$ vi /etc/config/firewall
+
+
+
+config 'redirect'
+        option 'src' 'wan'
+        option 'src_dport' '80'
+        option 'dest' 'lan'
+        option 'dest_ip' '192.168.1.1'
+        option 'dest_port' '80'
+        option 'proto' 'tcp'
+
+config 'rule'
+        option 'src' 'wan'
+        option 'dest_port' '80'
+        option 'target' 'ACCEPT'
+        option 'proto' 'tcp'
+        
+        
+        
+$ /etc/init.d/firewall restart
+```
+
+Now either run Meshenger, or run a simple http server (to share files, or whatever) from any directory with this Python oneliner:
+
+```  python -m SimpleHTTPServer 80 ```
+
+
+After forwarding the correct ports on your home router/modem (from any ip on port 80 to your openwrt box (lan) ip on port 80) your website will now be accessible from outside (wan) through your external IP!
+
