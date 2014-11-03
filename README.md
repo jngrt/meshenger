@@ -86,7 +86,7 @@ Edit fstab again now make the swap look like this:
 ```
 config mount
 	option device   /dev/sda2
-	option enabled
+	option enabled 
 ```
 ### Wireless configuration
 
@@ -310,7 +310,6 @@ Now you can start/stop meshenger as a service, to enable the meshenger as srevic
 To start/stop/disable replace 'enable' with start, stop or disable.
 
 
-
 ### Installing meshenger
 
 Get the dependencies and clone the git
@@ -318,3 +317,173 @@ Get the dependencies and clone the git
 `$ opkg install python git `
 
 `$ git clone git://github.com/jngrt/meshenger.git `
+
+
+### Running Meshenger on Boot
+
+To launch the Meshenger script (or python script in this case), we have to run it as a 'Service'.
+Befor we can do so we need to know some variable.
+
+#### Path to python
+Find out where your Python binary is located:
+
+```$ which python```
+
+This command outputs your path, for example: ` /usr/bin/python`, remember this path
+
+#### Boot order
+Alot of processes are started at boot, and we want to make sure our script runs after the system has booted completely. To find out the boot order, look in the rc.d folder:
+
+```$ ls /etc/rc.d```
+
+This will output a list of startup sctipts with prefixes like S10-, S20-, S30-. The numbers define the boot order, the higher, the later. Remember the highest 'S'(cript) number. We need to run our script after the last one.
+
+
+#### Startup script
+Create a new file in `/etc/init.d/`
+
+```$ vi /etc/init.d/meshenger```
+
+And paste the script below and correct your path to pyton and boot order number, both found above.
+
+```
+#!/bin/sh /etc/rc.common
+#meshenger startup script
+
+START=99 #the boot order number, note in our case the SAME number as the highest one found.
+SERVICE_DAEMONIZE=1 #start as service, important!
+
+start(){
+	sleep 10 #make sure booting is finished
+	echo 'starting meshenger'
+	/usr/bin/python /root/meshenger/main.py &  #path to python binary, space, full path to your script
+
+
+}
+
+
+stop(){
+	echo 'stopping meshenger'
+	killall python
+}
+
+```
+
+Make sure both your script (main.py) and the init.d script are executable!
+
+```$ chmod +x /etc/init.d/meshenger```
+```$ chmod +x /root/meshenger/main.py```
+
+
+
+#### Enabling the service
+Now we have to activate the script we just pasted and make it run as service, on every (re)boot.
+
+```$ /etc/init.d/meshenger enable```
+
+This creates a symlink in `/etc/rc.d` with the boot order number prefix you provided in the init.d script (S99-meshenger). You can also start and stop the service manually with:
+
+```$ /etc/init.d/meshenger start```
+```$ /etc/init.d/meshenger stop```
+
+That's all, reboot and see if it works ( `$ ps | grep python` )!
+
+
+
+### SSH Access from Internet (wan) 
+
+If you want, you can hook your box up to the internet and manage it remotely. This is not in the scope of this project but I'll share the steps with you:
+
+#### Configure your firewall
+
+
+```
+$ vi /etc/config/firewall
+
+
+config 'rule'
+  option 'src' 'wan'
+  option 'dest_port' '22'
+  option 'target' 'ACCEPT'
+  option 'proto' 'tcp' 
+  
+  
+$ /etc/init.d/firewall restart
+
+```
+
+Enable user iptable script:
+
+
+```
+$ vi  vi /etc/firewall.user 
+
+
+iptables -t nat -A prerouting_wan -p tcp --dport 22 -j ACCEPT
+iptables        -A input_wan      -p tcp --dport 22 -j ACCEPT
+ 
+  
+  
+$ /etc/init.d/firewall restart
+
+```
+ 
+
+#### Configure open ssh service
+
+Add the line below in your dropbear config
+
+```
+$ vi /etc/config/dropbear
+
+
+option 'GatewayPorts' 'on'
+  
+  
+$ /etc/init.d/dropbear restart
+
+```
+Now you can acces your router, via ssh, from the internet. Don't forget to add portforwarding on you're modem/router!
+Next up, http access from the internet!
+
+
+### HTTP Access from Internet (wan) 
+
+If you want, you can host Meshenger or your own homepage on the internet. This is not in the scope of this project but I'll share the steps with you:
+
+#### Configure your firewall
+
+Add the following lines in your firewall config, and restart the firewall:
+
+
+```
+$ vi /etc/config/firewall
+
+
+
+config 'redirect'
+        option 'src' 'wan'
+        option 'src_dport' '80'
+        option 'dest' 'lan'
+        option 'dest_ip' '192.168.1.1'
+        option 'dest_port' '80'
+        option 'proto' 'tcp'
+
+config 'rule'
+        option 'src' 'wan'
+        option 'dest_port' '80'
+        option 'target' 'ACCEPT'
+        option 'proto' 'tcp'
+        
+        
+        
+$ /etc/init.d/firewall restart
+```
+
+Now either run Meshenger, or run a simple http server (to share files, or whatever) from any directory with this Python oneliner:
+
+```  python -m SimpleHTTPServer 80 ```
+
+
+After forwarding the correct ports on your home router/modem (from any ip on port 80 to your openwrt box (lan) ip on port 80) your website will now be accessible from outside (wan) through your external IP!
+
