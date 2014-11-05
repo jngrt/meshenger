@@ -110,7 +110,7 @@
 			//background:-moz-linear-gradient(top,  #fff,  #eee);
 		}
 		#outbox{
-			display:hidden;
+			display:none;
 		}
 		#header{
 			width:100%;
@@ -118,6 +118,9 @@
 		}
 		#name{
 
+		}
+		.hops .node{
+	//	display:hidden;
 		}
 
 		</style>
@@ -142,8 +145,6 @@
 			<option value="dateSend">Sort by Date Send</option>
 
 </select>
-
-
 		<ul id="inbox"></ul>
 
 		<!--<h2>outbox</h2>-->
@@ -152,6 +153,7 @@
 
 <script type="text/javascript">
 
+localStorage.clear();
 /*
  * OUTBOX STUFF
  */
@@ -165,8 +167,18 @@ document.getElementById( 'send' ).onclick = function() {
 	var namm= document.getElementById('name').value;
 	}
 	var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
-	outStr += new Date().getTime() + ' ' + namm + '///' + mess + '\n';
-	localStorage.setItem( 'outbox', outStr );
+	var newMsgs ={};
+	var ddata= new Date().getTime();
+	var contento = {
+	"time" : ddata,
+	"message" : mess,
+	"name" : namm,
+	"node" : "local",
+	"hops" : "0"
+	}
+	newMsgs.message = contento;	
+	
+	localStorage.setItem( 'outbox', JSON.stringify(newMsgs) );
 	updateOutboxView();
 	checkOutbox();
 	document.getElementById('message').value = '';
@@ -181,8 +193,10 @@ function checkOutbox() {
 		if ( lines[i].length === 0 ) {
 			continue;
 		}
-		var ts = lines[ i ].substr( 0, lines[ i ].indexOf( ' ' ));
-		var msg = lines[ i ].substr( lines[ i ].indexOf( ' ' ));
+		var obj = JSON.parse(lines[i]);
+		var ts = obj.message.time;
+		delete obj.message.time;
+		var msg = JSON.stringify(obj.message);
 		sendMessage( ts, msg );
 	}
 }
@@ -208,7 +222,8 @@ function removeOutboxItem( timestamp ) {
 	var outStr = localStorage.getItem( 'outbox' ) || '';
 	var lines = outStr.split( /\n/ );
 	for ( var i in lines ) {
-		var ts = lines[ i ].substr( 0, lines[ i ].indexOf( ' ' ));
+                var obj = JSON.parse(lines[i]);
+		var ts = obj.message.time;
 		if ( ts === timestamp ) {
 			lines.splice( i, 1 );
 			break;
@@ -226,28 +241,19 @@ function updateOutboxView() {
 		if ( lines[ i ].length === 0 ) {
 			continue;
 		}
-		var ts = lines[ i ].substr( 0, lines[ i ].indexOf( ' ' ));
-		var msg = lines[ i ].substr( lines[ i ].indexOf( ' ' ));
+               var obj = JSON.parse(lines[i]);
+                var ts = obj.message.time;
+                delete obj.message.time;
+                var msg = JSON.stringify(obj.message);
+
 		contentString += '<li><b>' + ts + ' </b>' + msg + '</li>';
 	}
 	document.getElementById( 'outbox' ).innerHTML = contentString;
 }
 
-function doStuffForEach( entriesString, stuffFunction ) {
-	if ( ! entriesString ) {
-		return;
-	}
-	var lines = entriesString.split( /\n/ );
-	for ( var i in lines ) {
-		var ts = lines[ i ].substr( 0, lines[ i ].indexOf( ' ' ));
-		var msg = lines[ i ].substr( lines[ i ].indexOf( ' ' ) + 1 );
-		stuffFunction( ts, msg );
-	}
-}
 /*
  * INBOX STUFF
  */
-
 
 
 function updateInboxView() {
@@ -257,15 +263,15 @@ function updateInboxView() {
 	if (localStorage.length>0) {
 	for (i=0;i<localStorage.length;i++){
 
-
-	element=localStorage.getItem(localStorage.key(i))
-
-	elesplit=element.split('///');
-
-	if ( localStorage.key(i).length === 0 || element === 'outbox' ) {
-		continue;
+	element=localStorage.getItem(localStorage.key(i));
+	
+	if ( localStorage.key(i).length < 10 || element === 'outbox' ) {
+	continue;
 	}
-	localStorageArray[i] = { time:localStorage.key(i), user:elesplit[0], message:elesplit[1] };
+//	alert(element);	
+	elementj = JSON.parse(element);
+
+	localStorageArray[i] = { time:localStorage.key(i), user:elementj.name, message:elementj.message, node:elementj.node, hops:elementj.hops };
 	}
 	}
 	orderStorage = localStorageArray.sort(function(a,b) { return b.time - a.time } );
@@ -278,7 +284,7 @@ function updateInboxView() {
 		var date = new Date(parseInt(orderStorage[i].time));
 //		date.setHours(date.getHours() + 2);
 		var datereadable = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes();
-		contentString += '<li><b>' + datereadable + ' </b>' + ' <i>'+ orderStorage[i].user +'</i><br/> '+orderStorage[i].message+'</li>';
+		contentString += '<li><b>' + datereadable + ' </b>' + ' <i>'+ orderStorage[i].user +'</i><br/> '+orderStorage[i].message+' <span class="node '+orderStorage[i].node+'">'+orderStorage[i].node+'</span> <span class="hops '+orderStorage[i].hops+'">'+orderStorage[i].hops+'</span></li>';
 	}
 	document.getElementById( 'inbox' ).innerHTML = contentString;
 }

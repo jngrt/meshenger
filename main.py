@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket, os, time, select, urllib, sys, threading
+import socket, os, time, select, urllib, sys, threading, json
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
@@ -63,9 +63,9 @@ class Meshenger:
         print 'found', len(self.devices),'device(s)'
 
         for device in self.devices.keys():
-          nodepath = self.ip_to_hash_path(device) #make a folder for the node (nodes/'hash'/)
-          nodeupdatepath = os.path.join(self.ip_to_hash_path(device), 'lastupdate')
-
+          nodehash = self.hasj(device)
+	  nodepath = os.path.join(os.path.abspath('nodes'), nodehash)
+          nodeupdatepath = os.path.join(nodepath, 'lastupdate')
 
           print 'Checking age of foreign node index'
           print self.devices[device], 'Foreign announce timestamp'
@@ -81,7 +81,7 @@ class Meshenger:
             print 'Foreign node"s index is newer, proceed to download index'
             self.get_index(device, nodepath)
             print 'downloading messages'
-            self.get_messages(device, nodepath)
+            self.get_messages(device, nodepath, nodehash)
           self.node_timestamp(device)
 
       time.sleep(5) #free process or ctrl+c
@@ -194,7 +194,7 @@ Download the indices from other nodes.
     os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 
 
-  def get_messages(self, ip, path):
+  def get_messages(self, ip, path, hash):
     """
 Get new messages from other node based on it's index file
 """
@@ -206,6 +206,12 @@ Get new messages from other node based on it's index file
           if not os.path.exists(messagepath):
             print 'downloading', message, 'to', messagepath
             os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)
+	    with open(messagepath, 'r+') as f:
+		data=json.load(f)
+	    	data['hops']=str(int(data['hops'])+1)
+		data['node']=hash
+	        f.seek(0)
+		json.dump(data, f)
     except:
       print 'Failed to download messages'
       pass
@@ -222,6 +228,7 @@ Convert a node's ip into a hash and make a directory to store it's files
       os.mkdir(nodepath)
 
     return nodepath
+
 
   def hasj(self, ip):
         """
