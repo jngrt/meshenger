@@ -37,6 +37,7 @@ git clone ://github.com/rscmbbng/meshenger /root/meshenger
 mv uhttpd /etc/config/uhttpd
 
 mv meshenger /etc/init.d/meshenger
+/etc/init.d/meshenger enable
 
 echo 'my ip address is:' #klopt nog niet
 ifconfig  br-lan | grep 'inet addr'
