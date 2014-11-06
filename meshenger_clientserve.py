@@ -13,18 +13,14 @@ import logging, logging.config
 logging.config.fileConfig('pylog.conf')
 logger = logging.getLogger('meshenger'+'.clientserve')
 
-# this variable is set from main, to be called when new messages available
-# build_index_callback = None
-
-
 class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   messageDir = "msg"
 
-  """
-  Serve index and messages
-  """
   def do_GET(self):
+    """
+Serve index and messages
+"""
 
     if self.path == '/index' or self.path.startswith( "/"+self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
@@ -44,10 +40,10 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.wfile.write(the_file.read())
 
 
-  """
-  Allow clients to post messages
-  """
   def do_POST(self):
+    """
+Allow clients to post messages
+"""
     if self.path == '/send':
       logger.info('incoming message from client!')
       length = int(self.headers['Content-Length'])
@@ -69,7 +65,9 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         pass
 
   def writeMessage(self, time, message):
-
+    """
+Write message to disk
+"""
     f = os.path.join( self.messageDir, time)
     if os.path.isfile( f ):
       return

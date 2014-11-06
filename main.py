@@ -46,12 +46,6 @@ class Meshenger:
       c.daemon = True
       c.start()
 
-      #b = threading.Thread(target=self.build_index)
-      #b.daemon = True
-      #b.start()
-
-      #os.system("python meshenger_clientserve.py")
-
     except (KeyboardInterrupt, SystemExit):
       logger.info('exiting discovery thread')
       d.join()
@@ -61,7 +55,6 @@ class Meshenger:
       c.join()
       sys.exit()
     except Exception as e:
-      #catch all other exceptions
       logger.warning( 'Main __init__ thread exception: %s', repr(e) )
     except:
       logger.warning( 'Main __init__ unknown thread exception')
@@ -168,7 +161,10 @@ Initialize the clientserver
     # meshenger_clientserve.build_index_callback = self.build_index
 
   def init_index(self):
-    logger.info('Building own index for the first time\n')
+    """
+Initialize the index. Read from disk or create new.
+"""
+    logger.info('Checking own index for the first time\n')
 
     if not os.path.exists('index'):
       with open('index','wb') as index:

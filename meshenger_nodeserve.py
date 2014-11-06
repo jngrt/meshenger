@@ -28,10 +28,10 @@ class NodeServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   messageDir = "/msg"
 
-  """
-  Serve index and messages
-  """
   def do_GET(self):
+    """
+Serve index and messages
+"""
     if self.path == '/':
       self.path = "/index"
 
@@ -49,6 +49,7 @@ class HTTPServerV6(BaseHTTPServer.HTTPServer):
 
 class NodeServe():
   def __init__(self, port):
+    logger.info('NodeServe.__init__')
     server = HTTPServerV6(('::', port), NodeServeHandler)
     server.serve_forever()
 
