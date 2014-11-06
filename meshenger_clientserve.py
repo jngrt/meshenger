@@ -27,14 +27,20 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.send_response(200)
       self.send_header('Content-type', 'text/html')
       self.end_headers()
-
-      f = os.path.join('/root/meshenger/',"webapp.html")
+      f = os.path.relpath('webapp.html')
+      # f = os.path.join('/root/meshenger/',"webapp.html")
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
 
     elif self.path == '/index' or self.path.startswith( "/"+self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-
+    elif self.path == '/log':
+      self.send_response(200)
+      self.send_header('Content-type', 'text-html')
+      self.end_headers()
+      f = os.path.relpath('log/meshenger.log')
+      with open( f, 'r') as the_file:
+        self.wfile.write(the_file.read())
     else:
       self.send_response(200) #serve the webapp on every url requested
       self.send_header('Content-type', 'text/html')
