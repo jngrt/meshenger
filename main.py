@@ -27,6 +27,8 @@ class Meshenger:
       os.mkdir(self.msg_dir)
       logger.info('Making message directory')
 
+    self.init_index()
+
     try:
       d = threading.Thread(target=self.discover)
       d.daemon = True
@@ -44,9 +46,9 @@ class Meshenger:
       c.daemon = True
       c.start()
 
-      b = threading.Thread(target=self.build_index)
-      b.daemon = True
-      b.start()
+      #b = threading.Thread(target=self.build_index)
+      #b.daemon = True
+      #b.start()
 
       #os.system("python meshenger_clientserve.py")
 
@@ -58,6 +60,11 @@ class Meshenger:
       n.join()
       c.join()
       sys.exit()
+    except Exception as e:
+      #catch all other exceptions
+      logger.warning( 'Main __init__ thread exception: %s', e.message )
+    except:
+      logger.warning( 'Main __init__ unknown thread exception')
 
     while True:
       logger.debug('Entering main loop')
@@ -85,6 +92,7 @@ class Meshenger:
             self.get_index(device, nodepath)
             logger.info('downloading messages')
             self.get_messages(device, nodepath, nodehash)
+            self.build_index()
           self.node_timestamp(device)
 
       time.sleep(5) #free process or ctrl+c
@@ -114,7 +122,7 @@ Announce the node's existance to other nodes
 Discover other devices by listening to the Meshenger announce port
 """
 
-    print 'Discovering'
+    logger.info('Discovering')
     bufferSize = 1024 # whatever you need?
 
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -155,6 +163,17 @@ Initialize the clientserver
     logger.info('Serving to client')
     import meshenger_clientserve
     meshenger_clientserve.main()
+    meshenger_clientserve.build_index_callback = self.build_index
+
+  def init_index(self):
+    logger.info('Building own index for the first time\n')
+
+    if not os.path.exists('index'):
+      with open('index','wb') as index:
+        index.write('')
+      self.previous_index = []
+    else:
+      self.previous_index = open('index').readlines()
 
 
   def build_index(self):
@@ -163,31 +182,21 @@ Make an index file of all the messages present on the node.
 Save the time of the last update.
 """
 
-    logger.info('Building own index for the first time\n')
+    current_index = os.listdir(self.msg_dir)
+    if current_index != self.previous_index:
+      with open('index', 'wb') as index:
+        for message in os.listdir(self.msg_dir):
+          index.write(message)
+          index.write('\n')
+      self.index_last_update = str(int(time.time()))
 
-    if not os.path.exists('index'):
-      with open('index','wb') as index:
-        index.write('')
-      previous_index = []
-    else:
-      previous_index = open('index').readlines()
+      logger.info('Index updated: %s', current_index)
 
-    while not self.exitapp:
-      current_index = os.listdir(self.msg_dir)
-      if current_index != previous_index:
-        with open('index', 'wb') as index:
-          for message in os.listdir(self.msg_dir):
-            index.write(message)
-            index.write('\n')
-        self.index_last_update = str(int(time.time()))
+      with open('index_last_update', 'wb') as indexupdate:
+        indexupdate.write(self.index_last_update) ### misschien moet dit index_last_update zijn
 
-        logger.info('Index updated: %s', current_index)
+    self.previous_index = current_index
 
-        with open('index_last_update', 'wb') as indexupdate:
-          indexupdate.write(self.index_last_update) ### misschien moet dit index_last_update zijn
-
-      previous_index = current_index
-      time.sleep(5)
 
   def get_index(self,ip, path):
     """

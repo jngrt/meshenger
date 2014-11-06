@@ -13,6 +13,9 @@ import logging, logging.config
 logging.config.fileConfig('pylog.conf')
 logger = logging.getLogger('meshenger'+'.clientserve')
 
+# this variable is set from main, to be called when new messages available
+build_index_callback = None
+
 
 class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
@@ -66,6 +69,10 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.end_headers()
       self.wfile.write('message created')
 
+      #let main rebuild message index
+      if build_index_callback:
+        build_index_callback()
+
   def writeMessage(self, time, message):
 
     f = os.path.join( self.messageDir, time)
@@ -76,13 +83,13 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 class ClientServe():
-  def __init__(self, port):
+  def __init__(self, port, build_index_callback):
     server = HTTPServer( ('', port), ClientServeHandler)
     server.serve_forever()
 
 
-def main():
-  clientServe = ClientServe(80)
+def main( build_index_callback ):
+  clientServe = ClientServe(80, build_index_callback)
 
 if __name__ == '__main__':
   main()
