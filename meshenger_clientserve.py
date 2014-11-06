@@ -83,13 +83,13 @@ class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 class ClientServe():
-  def __init__(self, port, build_index_callback):
+  def __init__(self, port):
     server = HTTPServer( ('', port), ClientServeHandler)
     server.serve_forever()
 
 
-def main( build_index_callback ):
-  clientServe = ClientServe(80, build_index_callback)
+def main():
+  clientServe = ClientServe(80)
 
 if __name__ == '__main__':
   main()

@@ -62,7 +62,7 @@ class Meshenger:
       sys.exit()
     except Exception as e:
       #catch all other exceptions
-      logger.warning( 'Main __init__ thread exception: %s', e.message )
+      logger.warning( 'Main __init__ thread exception: %s', repr(e) )
     except:
       logger.warning( 'Main __init__ unknown thread exception')
 
