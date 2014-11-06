@@ -162,8 +162,10 @@ Initialize the clientserver
 """
     logger.info('Serving to client')
     import meshenger_clientserve
+    # set a reference to this object 
+    meshenger_clientserve.meshenger = self
     meshenger_clientserve.main()
-    meshenger_clientserve.build_index_callback = self.build_index
+    # meshenger_clientserve.build_index_callback = self.build_index
 
   def init_index(self):
     logger.info('Building own index for the first time\n')
@@ -174,14 +176,14 @@ Initialize the clientserver
       self.previous_index = []
     else:
       self.previous_index = open('index').readlines()
-
+      self.build_index()
 
   def build_index(self):
     """
 Make an index file of all the messages present on the node.
 Save the time of the last update.
 """
-
+    logger.debug('build_index')
     current_index = os.listdir(self.msg_dir)
     if current_index != self.previous_index:
       with open('index', 'wb') as index:
