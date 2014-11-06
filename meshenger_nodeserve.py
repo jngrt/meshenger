@@ -7,6 +7,11 @@ import socket
 import BaseHTTPServer
 import SimpleHTTPServer
 import urlparse
+import logging
+import logging.config
+
+logging.config.fileConfig('pylog.conf')
+logger = logging.getLogger('meshenger'+'.nodeserve')
 
 #GOTTMITTUNS
 
