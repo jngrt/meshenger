@@ -8,6 +8,10 @@ from BaseHTTPServer import HTTPServer
 import SimpleHTTPServer
 import urlparse
 import unicodedata
+import logging, logging.config
+
+logging.config.fileConfig('pylog.conf')
+logger = logging.getLogger('meshenger'+'.clientserve')
 
 
 class ClientServeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):

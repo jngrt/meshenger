@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-import socket, os, time, select, urllib, sys, threading, json
+import socket, os, time, select, urllib, sys, threading, json, logging, logging.config
+
+logging.config.fileConfig('pylog.conf')
+logger = logging.getLogger('meshenger'+'.main')
 
 class Meshenger:
   devices = {} #the dictionary of all the nodes this this node has seen
@@ -17,12 +20,12 @@ class Meshenger:
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-hotspot/disable_ipv6")
 
     os.chdir(os.path.dirname(__file__)) # change present working directory to the one where this file is
-    
+
     self.own_ip = self.get_ip_adress().strip()
 
     if not os.path.exists(self.msg_dir):
       os.mkdir(self.msg_dir)
-      print 'Making message directory'
+      logger.info('Making message directory')
 
     try:
       d = threading.Thread(target=self.discover)
@@ -48,7 +51,7 @@ class Meshenger:
       #os.system("python meshenger_clientserve.py")
 
     except (KeyboardInterrupt, SystemExit):
-      print 'exiting discovery thread'
+      logger.info('exiting discovery thread')
       d.join()
       a.join()
       b.join()
@@ -57,30 +60,30 @@ class Meshenger:
       sys.exit()
 
     while True:
-      print 'Entering main loop'
+      logger.info('Entering main loop')
       #
       if len(self.devices) > 0:
-        print 'found', len(self.devices),'device(s)'
+        logger.info('found %s device(s)', len(self.devices))
 
         for device in self.devices.keys():
           nodehash = self.hasj(device)
 	  nodepath = os.path.join(os.path.abspath('nodes'), nodehash)
           nodeupdatepath = os.path.join(nodepath, 'lastupdate')
 
-          print 'Checking age of foreign node index'
-          print self.devices[device], 'Foreign announce timestamp'
+          logger.info('Checking age of foreign node index')
+          logger.info('%s Foreign announce timestamp', self.devices[device])
           try:
             foreign_node_update = open(nodeupdatepath).read()
           except:
             foreign_node_update = 0 #means it was never seen before
 
-          print foreign_node_update, 'Locally stored timestamp for device'
+          logger.info('%s Locally stored timestamp for device', foreign_node_update)
 
 
           if self.devices[device] > foreign_node_update:
-            print 'Foreign node"s index is newer, proceed to download index'
+            logger.info('Foreign node"s index is newer, proceed to download index')
             self.get_index(device, nodepath)
-            print 'downloading messages'
+            logger.info('downloading messages')
             self.get_messages(device, nodepath, nodehash)
           self.node_timestamp(device)
 
@@ -99,7 +102,7 @@ class Meshenger:
     """
 Announce the node's existance to other nodes
 """
-    print 'Announcing'
+    logger.info('Announcing')
     while not self.exitapp:
       sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
       sock.sendto(self.index_last_update, ("ff02::1", self.announce_port))
@@ -120,7 +123,7 @@ Discover other devices by listening to the Meshenger announce port
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       ip = result[1][0]
-      print ip, "*"*45
+      logger.info('%s %s', ip, "*"*45)
       node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
 
       if not os.path.exists(node_path) and ip != self.own_ip: 
@@ -128,10 +131,10 @@ Discover other devices by listening to the Meshenger announce port
         self.ip_to_hash_path(ip) #make a folder /nodes/hash
         self.devices[ip] = result[0]
         #self.node_timestamp(ip) #make a local copy of the timestamp in /nodes/hash/updatetimestamp
-        print 'New node', ip
+        logger.info('New node %s', ip)
 
       elif os.path.exists(node_path) and ip != self.own_ip:
-        print 'Known node', ip
+        logger.info('Known node %s', ip)
         self.devices[ip] = result[0]
 
 
@@ -141,7 +144,7 @@ Discover other devices by listening to the Meshenger announce port
     """
 Initialize the nodeserver
 """
-    print 'Serving to nodes'
+    logger.info('Serving to nodes')
     import meshenger_nodeserve
     meshenger_nodeserve.main()
 
@@ -149,7 +152,7 @@ Initialize the nodeserver
     """
 Initialize the clientserver
 """
-    print 'Serving to client'
+    logger.info('Serving to client')
     import meshenger_clientserve
     meshenger_clientserve.main()
 
@@ -160,7 +163,7 @@ Make an index file of all the messages present on the node.
 Save the time of the last update.
 """
 
-    print 'Building own index for the first time\n'
+    logger.info('Building own index for the first time\n')
 
     if not os.path.exists('index'):
       with open('index','wb') as index:
@@ -178,9 +181,9 @@ Save the time of the last update.
             index.write('\n')
         self.index_last_update = str(int(time.time()))
 
-        print 'Index updated:', current_index
+        logger.info('Index updated: %s', current_index)
 
-        with open('index_last_update', 'wb') as indexupdate: 
+        with open('index_last_update', 'wb') as indexupdate:
           indexupdate.write(self.index_last_update) ### misschien moet dit index_last_update zijn
 
       previous_index = current_index
@@ -204,7 +207,7 @@ Get new messages from other node based on it's index file
         for message in index:
           messagepath = os.path.join(os.path.abspath(self.msg_dir), message)
           if not os.path.exists(messagepath):
-            print 'downloading', message, 'to', messagepath
+            logger.info('downloading %s to %s', message, messagepath)
             os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/msg/'+message+' -O '+messagepath)
 	    with open(messagepath, 'r+') as f:
 		data=json.load(f)
@@ -213,7 +216,7 @@ Get new messages from other node based on it's index file
 	        f.seek(0)
 		json.dump(data, f)
     except:
-      print 'Failed to download messages'
+      logger.info('Failed to download messages')
       pass
 
   def ip_to_hash_path(self, ip):
@@ -250,7 +253,7 @@ Hack to adhoc0's inet6 adress
 
 
 if __name__ == "__main__":
-  print "test"
+  logger.info("starting main...")
   try:
     meshenger = Meshenger()
   except (KeyboardInterrupt, SystemExit):
