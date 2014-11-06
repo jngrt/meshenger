@@ -60,7 +60,7 @@ class Meshenger:
       sys.exit()
 
     while True:
-      logger.info('Entering main loop')
+      logger.debug('Entering main loop')
       #
       if len(self.devices) > 0:
         logger.info('found %s device(s)', len(self.devices))
