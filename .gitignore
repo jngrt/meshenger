@@ -4,3 +4,4 @@ msg/*
 index
 interfaceip6adress
 nodes/*
+*.log

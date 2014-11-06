@@ -32,11 +32,12 @@ sed -i -e "s/option 'interfaces' 'mesh'/option 'interfaces' 'adhoc0'/g" /etc/con
 
 opkg install python git
 sleep 1
-git clone git://github.com/jngrt/meshenger.git /meshenger
+git clone ://github.com/rscmbbng/meshenger /root/meshenger
 
 mv uhttpd /etc/config/uhttpd
 
 mv meshenger /etc/init.d/meshenger
+/etc/init.d/meshenger enable
 
 echo 'my ip address is:' #klopt nog niet
 ifconfig  br-lan | grep 'inet addr'
