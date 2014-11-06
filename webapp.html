@@ -268,8 +268,12 @@ function updateInboxView() {
 	if ( localStorage.key(i).length < 10 || element === 'outbox' ) {
 	continue;
 	}
-//	alert(element);	
-	elementj = JSON.parse(element);
+//	alert(element);
+	try {
+        elementj = JSON.parse(element);
+    	} catch (e) {
+        continue;
+    	}	
 
 	localStorageArray[i] = { time:localStorage.key(i), user:elementj.name, message:elementj.message, node:elementj.node, hops:elementj.hops };
 	}
