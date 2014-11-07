@@ -255,6 +255,7 @@ Convert a node's ip into a hash and make a directory to store it's files
     """
 Hack to adhoc0's inet6 adress
 """
+    #TODO possibly check if it's an empty file 
     if not os.path.isfile('interfaceip6adress'):
       os.system('ifconfig -a adhoc0 | grep inet6 > /root/meshenger/interfaceip6adress')
     with open('/root/meshenger/interfaceip6adress', 'r') as a:
