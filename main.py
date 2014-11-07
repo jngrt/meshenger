@@ -2,6 +2,8 @@
 
 import socket, os, time, select, urllib, sys, threading, json, logging, logging.config
 
+os.chdir(os.path.dirname(__file__)) # change present working directory to the one where this file is
+
 logging.config.fileConfig('pylog.conf')
 logger = logging.getLogger('meshenger'+'.main')
 
@@ -19,7 +21,6 @@ class Meshenger:
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-lan/disable_ipv6")
     os.system("echo 1 >> /proc/sys/net/ipv6/conf/br-hotspot/disable_ipv6")
 
-    os.chdir(os.path.dirname(__file__)) # change present working directory to the one where this file is
 
     self.own_ip = self.get_ip_adress().strip()
     # this hash is needed in clientserve, so client can generate color
