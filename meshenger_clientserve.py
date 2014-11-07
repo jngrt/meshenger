@@ -24,6 +24,14 @@ Serve index and messages
 
     if self.path == '/index' or self.path.startswith( "/"+self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+    elif self.path == '/id':
+      if meshenger and meshenger.own_hash:
+        self.send_response(200)
+        self.send_header('Content-type', 'text-html')
+        self.end_headers()
+        self.wfile.write(meshenger.own_hash)
+      else:
+        self.send_error(404,'Id not yet available')
     elif self.path == '/log':
       self.send_response(200)
       self.send_header('Content-type', 'text-html')
@@ -31,13 +39,25 @@ Serve index and messages
       f = os.path.relpath('log/meshenger.log')
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
-    else:
+    elif self.path.startswith('/web'):
+
+      f = os.path.relpath(self.path[1:])
+      if not os.path.exists( f ) or os.path.isdir( f ):
+        f = os.path.join('web', 'index.html')
+
+      self.path = '/'+f
+      return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+    elif self.path == '/old':
       self.send_response(200) #serve the webapp on every url requested
       self.send_header('Content-type', 'text/html')
       self.end_headers()
       f = os.path.relpath( 'webapp.html')
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
+
+    else:
+      self.path = '/' + os.path.join('web', 'index.html')
+      return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
 
   def do_POST(self):

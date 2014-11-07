@@ -22,6 +22,8 @@ class Meshenger:
     os.chdir(os.path.dirname(__file__)) # change present working directory to the one where this file is
 
     self.own_ip = self.get_ip_adress().strip()
+    # this hash is needed in clientserve, so client can generate color
+    self.own_hash = self.hasj(self.own_ip)
 
     if not os.path.exists(self.msg_dir):
       os.mkdir(self.msg_dir)
