@@ -5,42 +5,60 @@ body, html{
 
 body{
   font-size:20px;
-  text-shadow: 1px 1px orange;
+  text-shadow: 1px 1px #ddd;
   font-family: times, 'times new roman', helvetica,serif;
   line-height:1.5em;
   color:#444;
   background:#fff;
-  //background-image: url(css/marble.jpg);
+  padding:20px;
 }
 
-textarea{
+
+#message-form textarea{
   -webkit-appearance: none;
   -moz-appearance: none;
-  display: block;
 
-  margin-left: auto;
-  margin-right: auto;
-  width: 90%; height: 50px;
-  line-height: 40px; font-size: 17px;
-  border: 1px solid #bbb;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  //background-image: url(css/aqua.jpg);
+  display: block;
+  outline:none;
+  width: 98%;
+  margin: 0 auto;
+  line-height: 40px;
+  border:none;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
   font-family: inherit;
-  font-size: inherit;
   font-size: 20px;
+
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+
 }
 
 
-button {
+#message-form .send-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  //border: 1px solid #bbb;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  width:100%;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin: 1.5em 0;
   font-family: inherit;
-  font-size: inherit;
   font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+
 }
 
 select{
@@ -55,10 +73,10 @@ select{
 
 }
 
-
-
 h2{
+  margin: 0 0 20px;
   font-size: 40px;
+  text-shadow: 0px 0px 23px #bbb;
 }
 
 hr{
@@ -68,16 +86,19 @@ hr{
   background-image: url(css/bg1.gif);
 
 }
-ul{
-  width:95%;
-  padding-left:30px;
-}
-li{
 
-  word-wrap:break-word;
+.messages ul{
+  width:100%;
+  padding:0px;
+}
+.messages li{
   list-style: none;
-  overflow: visible;
+  width:100%;
+}
+.messages .message-block {
   padding:30px;
+  word-wrap:break-word;
+  overflow: visible;
   -moz-box-shadow:0 0 23px #bbb;
   -webkit-box-shadow:0 0 23px #bbb;
   box-shadow:0 0 23px #bbb;
@@ -93,14 +114,16 @@ li{
   border-top-right-radius:123px;
   border-bottom-right-radius:123px;
   border-bottom-left-radius:123px;
-  left:-35px;
-
-  width:100%;
-  //overflow:hidden;
-  position:relative;
   background:#fff;
-  //background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  //background:-moz-linear-gradient(top,  #fff,  #eee);
+}
+.node, .hops {
+  font-size:10px;
+}
+.message-text {
+  font-size: 25px;
+}
+.date-sender {
+  font-size: 15px;
 }
 #outbox{
   display:none;

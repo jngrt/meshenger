@@ -15,19 +15,35 @@
     <div id="header">
       <h2>Meshenger</h2>
     </div>
+    <!--
+    <form id="message-form" action="">
+      <table width="100%" style="padding :10px;">
+        <tr>
+          <td width="100px">
+              <input style="width:100%" id="new-sender" type="text" placeholder="Your name">
+          </td>
+          <td>
+              <input style="width:100%" id="new-message" type="text" placeholder="Your message">
+          </td>
+          <td width="50px">
+            <input class="send-button" style="width:50px" type="button" value="Send">
+          </td>
+        </tr>
+      </table>
+    </form>
+    -->
 
-    <textarea id="name" rows="1"  placeholder="Your Name (leave empty for anonymous)"></textarea>
-    <textarea id="message" rows="3"  placeholder="Your Message"></textarea>
-    <button style="width:100%" id="send">Send</button>
+    <form id="message-form" action="">
+      <textarea id="name" rows="1" placeholder="Your Name"></textarea>
+      <textarea id="message" rows="2"  placeholder="Your Message"></textarea>
+      <input type="submit" class="send-button" value="Send">
+    </form>
 
-    <select id="messagesort" name="messageSort">
-      <option value="dateReceived">Sort by Date Received</option>
-      <option value="dateSend">Sort by Date Send</option>
-    </select>
-    <ul id="inbox"></ul>
+    <div class="messages">
+      <ul id="inbox"></ul>
 
-    <ul id="outbox"></ul>
-
+      <ul id="outbox"></ul>
+    </div>
     <script src="/web/main.js"></script>
   </body>
 </html>
