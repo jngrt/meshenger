@@ -31,6 +31,15 @@ Serve index and messages
       f = os.path.relpath('log/meshenger.log')
       with open( f, 'r') as the_file:
         self.wfile.write(the_file.read())
+    elif self.path.startswith('/web'):
+
+      f = os.path.relpath(self.path[1:])
+      if not os.path.exists( f ) or os.path.isdir( f ):
+        f = os.path.join('web', 'index.html')
+
+      self.path = '/'+f
+      return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+
     else:
       self.send_response(200) #serve the webapp on every url requested
       self.send_header('Content-type', 'text/html')
