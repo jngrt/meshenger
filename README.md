@@ -1,6 +1,10 @@
 meshenger
 =========
 
+View the wiki + latest howto's here:
+
+https://github.com/rscmbbng/meshenger/wiki
+
 Meshenger is a Forban-inspired messaging software used for a speculative broadcast communication project. The starting point is an electronic messaging system running on a wireless mesh network. The messages propagate through the network when devices that come in contact with each other synchronize their content. It is non-hierarchical, every node receives, relays and broadcasts messages.
 
 Using Meshenger, devices detect each other by continously broadcasting an identifier packet while listening to those of other nodes. As soon as two (or more) nodes detect each other they will try to synchronize the messages on each node.
@@ -453,4 +457,3 @@ Now either run Meshenger, or run a simple http server (to share files, or whatev
 
 
 After forwarding the correct ports on your home router/modem (from any ip on port 80 to your openwrt box (lan) ip on port 80) your website will now be accessible from outside (wan) through your external IP!
-
