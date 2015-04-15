@@ -8,8 +8,7 @@ echo 'You should review the settings of "wireless" and "network"'
 mkswap /dev/sda2
 swapon /dev/sda2
 
-head -n -1 /etc/config/fstab > fstab_temp; echo '\toption enable 1' >> fstabt; mv fstab_temp /etc/config/fstab
-
+mv fstab_extroot /etc/config/fstab
 
 echo 'Configuring wireless and hotspot'
 
