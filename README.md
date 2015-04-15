@@ -30,9 +30,7 @@ Alternatively if you use OSX you can enable internet sharing (make sure to set y
 
 Below you will find the manual configuration steps necessary to install Meshenger. We did however create some scripts to help you automate the process.
 
-First of all, flash your router per steps above, hook it up to your home router and configure your openwrt router to have internet access:
-
- TO BE CONTINUED.....
+Read more [here](https://github.com/rscmbbng/meshenger/blob/master/lazyinstall/README.md)
  
  
 ### System configuration
