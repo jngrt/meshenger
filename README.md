@@ -26,6 +26,8 @@ You are going to need to have an internet connection to your router, the easiest
 
 Alternatively if you use OSX you can enable internet sharing (make sure to set your OSX machine as the gateway and DNS server for your router in /etc/config/network)
 
+*if after flashing something goes wrong, you can reset the whole router in failsafe mode* see (http://wiki.openwrt.org/doc/howto/generic.failsafe)[here].
+
 ### Lazy Install
 
 Below you will find the manual configuration steps necessary to install Meshenger. We did however create some scripts to help you automate the process.
