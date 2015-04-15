@@ -17,7 +17,7 @@ mount -t ext4 /dev/sda1 /mnt/sda1
 
 echo 'Cleaning USB drive'
 
-rm -r /mnt/sda1/
+rm -r /mnt/sda1/*
 
 sleep 4
 
@@ -25,7 +25,7 @@ echo 'Copying filesystem to USB drive'
 mkdir -p /tmp/cproot
 mount --bind / /tmp/cproot
 sleep 1
-tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1 -xf -
+tar -C /tmp/cproot -cvf - . | tar -C /mnt/sda1/ -xf -
 sleep 1
 umount /tmp/cproot
 

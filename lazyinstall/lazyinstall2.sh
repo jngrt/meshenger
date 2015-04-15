@@ -8,7 +8,8 @@ echo 'You should review the settings of "wireless" and "network"'
 mkswap /dev/sda2
 swapon /dev/sda2
 
-mv fstab_extroot /etc/config/fstab
+head -n -1 /etc/config/fstab > fstab_temp; echo '\toption enable 1' >> fstabt; mv fstab_temp /etc/config/fstab
+
 
 echo 'Configuring wireless and hotspot'
 
@@ -32,7 +33,7 @@ sed -i -e "s/option 'interfaces' 'mesh'/option 'interfaces' 'adhoc0'/g" /etc/con
 
 opkg install python git
 sleep 1
-git clone ://github.com/rscmbbng/meshenger /root/meshenger
+git clone git://github.com/rscmbbng/meshenger /root/meshenger
 
 mv uhttpd /etc/config/uhttpd
 
