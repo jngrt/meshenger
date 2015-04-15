@@ -7,7 +7,7 @@ config wifi-iface	'wmesh'
 	option bssid	'66:66:66:66:66:66'
 
 config wifi-iface                       
-        option 'device' 'radio0'  #use your excisting wifi device, look in the list above.    
+        option 'device' 'radio0'  #use your existing wifi device, look in the list above.    
         option 'ssid' 'meshenger_node'  #use a unique name for your network?
         option 'network' 'hotspot'      
         option 'mode' 'ap'              
