@@ -26,7 +26,7 @@ You are going to need to have an internet connection to your router, the easiest
 
 Alternatively if you use OSX you can enable internet sharing (make sure to set your OSX machine as the gateway and DNS server for your router in /etc/config/network)
 
-*if after flashing something goes wrong, you can reset the whole router in failsafe mode* see [here](http://wiki.openwrt.org/doc/howto/generic.failsafe).
+*If after flashing something goes wrong, you can reset the whole router in failsafe mode* see [here](http://wiki.openwrt.org/doc/howto/generic.failsafe).
 
 ### Lazy Install
 
