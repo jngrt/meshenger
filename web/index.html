@@ -7,7 +7,6 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta name="viewport" content="width=device-width, user-scalable=no">
-    <!-- <script src="/web/lib/jquery&#45;2.1.1.min.js"></script> -->
     <link href="/web/style.css" rel="stylesheet" type="text/css">
     <title>meshed up</title>
   </head>
@@ -15,29 +14,52 @@
     <div id="header">
       <h2>Meshenger</h2>
     </div>
-    <!--
-    <form id="message-form" action="">
-      <table width="100%" style="padding :10px;">
-        <tr>
-          <td width="100px">
-              <input style="width:100%" id="new-sender" type="text" placeholder="Your name">
-          </td>
-          <td>
-              <input style="width:100%" id="new-message" type="text" placeholder="Your message">
-          </td>
-          <td width="50px">
-            <input class="send-button" style="width:50px" type="button" value="Send">
-          </td>
-        </tr>
-      </table>
-    </form>
-    -->
 
-    <form id="message-form" action="">
+    <form id="message-form" action="" accept-charset="utf-8">
       <textarea id="name" rows="1" placeholder="Your Name"></textarea>
       <textarea id="message" rows="2"  placeholder="Your Message"></textarea>
+      
+      
+     
+      <!-- removed photo button from here, otherwise triggers sending (empty) messages... TO FIX-->
+       
       <input type="submit" class="send-button" value="Send">
     </form>
+
+ <button id="pop" class="photo-buttons" onclick="document.getElementById('photoEdit').style.display='block';">Add Photo</button>
+
+
+<div id="photoEdit" class="photoBox">
+    <input id="fileInput" accept="image/*" capture="camera" type="file">
+    <br>
+    <p>
+      <span id="progress">--</span> 
+      <span id="total">--</span>
+    </p>
+  
+    <!--Squashed source<br>-->
+    <img id="sourceImage" src="" alt="capture" height="400" width="400">
+  
+    <!--Offset done<br>-->
+    <canvas id="canvas1" width="400" height="400"></canvas>
+    
+    <!--Dithered<br>-->
+    <canvas id="canvas2" width="400" height="400"></canvas>
+    
+    <!--Rotated<br>-->
+    <canvas id="canvas3" width="400" height="400"></canvas>
+    <br>
+
+    <button id="rotLeft">Rotate left</button>
+    <button id="rotRight">Rotate right</button>
+
+    <button id="submitPhoto" class="photo-buttons"  onclick="submitImage();document.getElementById('photoEdit').style.display='none';">submit</button>
+
+
+    <button id="submitPhoto" class="photo-buttons"  onclick="document.getElementById('photoEdit').style.display='none';">cancel</button>
+
+  </div>
+
 
     <div class="messages">
       <ul id="inbox"></ul>

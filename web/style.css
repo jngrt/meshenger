@@ -13,6 +13,37 @@ body{
   padding:20px;
 }
 
+img{
+  width:50%;
+  /* disable anti aliasing */
+  image-rendering: optimizeSpeed;            
+  image-rendering: -moz-crisp-edges;          
+  image-rendering: -o-crisp-edges;           
+  image-rendering: -webkit-optimize-contrast; 
+  image-rendering: pixelated; 
+  image-rendering: optimize-contrast;      
+  -ms-interpolation-mode: nearest-neighbor;   
+}
+
+/* hide calculation canvases */
+#sourceImage{
+  display: none;
+}
+#canvas1{
+  display: none;
+}
+#canvas2{
+  display: none;
+}
+
+#progress{
+  display: none;
+}
+
+#total{
+  display: none;
+}
+
 
 #message-form textarea{
   -webkit-appearance: none;
@@ -116,6 +147,70 @@ hr{
   border-bottom-left-radius:123px;
   background:#fff;
 }
+
+.photoBox {
+  display: none;
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  padding: 16px;
+  background-color:#fff;
+  z-index:1002;
+  overflow: auto;
+
+
+
+  padding:30px;
+  
+  overflow: visible;
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+  -webkit-border-top-left-radius:123px;
+  -webkit-border-top-right-radius:123px;
+  -webkit-border-bottom-right-radius:123px;
+  -webkit-border-bottom-left-radius:123px;
+  -moz-border-radius-bottomright:123px;
+  -moz-border-radius-bottomleft:123px;
+  -moz-border-top-left-radius:123px;
+  -moz-border-top-right-radius:123px;
+  border-top-left-radius:123px;
+  border-top-right-radius:123px;
+  border-bottom-right-radius:123px;
+  border-bottom-left-radius:123px;
+  background:#fff;
+}
+
+
+.photo-buttons {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  //border: 1px solid #bbb;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  width:100%;
+  display: block;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+
+}
+
+
+
+
 .node, .hops {
   font-size:10px;
 }
