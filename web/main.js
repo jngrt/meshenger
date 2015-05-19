@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function(){
   window.setInterval( update, 7000 );
 
   initState();
+  initPhotoStuff();
 });
 
 /*
@@ -322,7 +323,7 @@ var progressEl = document.getElementById('progress');
 var totalEl = document.getElementById('total');
 
 
-document.addEventListener('DOMContentLoaded', function(){
+function initPhotoStuff(){
     canvas1 = document.getElementById('canvas1');
     context1 = canvas1.getContext('2d');
     canvas2 = document.getElementById('canvas2');
@@ -335,33 +336,33 @@ document.addEventListener('DOMContentLoaded', function(){
 
     fileInput.onchange = onFileInputChange;
 
-    document.getElementById('rotLeft').onclick = onRotateLeft;
-    document.getElementById('rotRight').onclick = onRotateRight;
-},false);
+    document.getElementById('rot-left').onclick = onRotateLeft;
+    document.getElementById('rot-right').onclick = onRotateRight;
+    document.getElementById('submit-photo').onclick = submitImage;
 
-  
+}
+
+
 function submitImage(){
 
     // convert canvas to html/base64 image
     var image = new Image(); //create new image holder
-    image.id = "outputImage" //id it
+    image.id = "outputImage"; //id it
 
     var canvas = document.getElementById('canvas3'); // choose canvas element to convert
     var dataURL = canvas.toDataURL(); // convert cabvas to data url we can handle
 
-    //console.log(dataURL);
-
     var outputImg = document.createElement("img"); // create img tag
-    outputImg.src = dataURL // assign dataurl to image tag 'src' option
-    document.body.appendChild(outputImg); // append img to body (to be assigned to place holder div)
-    
-// append data to text area...not working yet..
+    outputImg.src = dataURL; // assign dataurl to image tag 'src' option
+    //document.body.appendChild(outputImg); // append img to body (to be assigned to place holder div)
+
+    // append data to text area...not working yet..
     var photo = document.getElementById('message'); // add data url to message field... not working yet
     //outputImg.src = "<img src='"+ outputImg.src; +"'/>" // construct image tag + img data...
         //photo += outputImg.src;
     photo.innerHTML += outputImg.src;
 
-   // sendMessage( "10  ", "outputImg.src" ); << breaks vereything ;) and is  an bad idea: TODO: append data stringto message field, or url whatever and preview it locally (append to body) before submitting, but textarea is refreshing or something ugh...aka find clean solution, add url parameter instead of dirty innerhtml hacking
+    sendMessage( new Date().getTime(), "test"); //<< breaks vereything ;) and is  an bad idea: TODO: append data stringto message field, or url whatever and preview it locally (append to body) before submitting, but textarea is refreshing or something ugh...aka find clean solution, add url parameter instead of dirty innerhtml hacking
 //TEST INNNETHTML ADD TO TEXATAREA QUICKYYYYY
 
     console.log(photo.innerHTML);
