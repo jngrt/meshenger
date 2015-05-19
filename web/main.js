@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
   //update everything to initialize
   updateInboxView();
-  updateOutboxView();
   update();
 
   //check for new messages every 7 seconds
@@ -39,29 +38,27 @@ document.addEventListener('DOMContentLoaded', function(){
  */
 
 function initState(){
-  document.getElementById('photo-page').style.display = "none";
-  document.getElementById('overview-page').style.display = "block";
-  document.getElementById('message-page').style.display = "none";
+  showOverview();
 
-  document.getElementById('new-photo').onclick = onNewPhoto;
-  document.getElementById('new-message').onclick = onNewMessage;
-  document.getElementById('message-back').onclick = onBack;
-  document.getElementById('photo-back').onclick = onBack;
+  document.getElementById('new-photo').onclick = showNewPhoto;
+  document.getElementById('new-message').onclick = showNewMessage;
+  document.getElementById('message-back').onclick = showOverview;
+  document.getElementById('photo-back').onclick = showOverview;
 }
 
-function onNewPhoto(){
+function showNewPhoto(){
   document.getElementById('photo-page').style.display = "block";
   document.getElementById('overview-page').style.display = "none";
   document.getElementById('message-page').style.display = "none";
 }
 
-function onNewMessage(){
+function showNewMessage(){
   document.getElementById('photo-page').style.display = "none";
   document.getElementById('overview-page').style.display = "none";
   document.getElementById('message-page').style.display = "block";
 }
 
-function onBack(){
+function showOverview(){
   document.getElementById('photo-page').style.display = "none";
   document.getElementById('overview-page').style.display = "block";
   document.getElementById('message-page').style.display = "none";
@@ -72,33 +69,27 @@ function onBack(){
  */
 document.getElementById('message-form').onsubmit = function(){
   var outStr = localStorage.getItem( 'outbox' ) || '';
-
-  if (document.getElementById('name').value == ""){
-    var namm = "anonymous";
-  }
-  else{
-    var namm = document.getElementById('name').value;
-  }
-  var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />"); 
+  var namm =  document.getElementById('name').value || "anonymous";
+  var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
   var newMsgs = {};
   var ddata = new Date().getTime();
-  var alias = ownAlias //to do: build a check to see if ownAlias == ownId, if so, alias should become 'local'
+  var alias = ownAlias;//to do: build a check to see if ownAlias == ownId, if so, alias should become 'local'
   var contento = {
     "time" : ddata,
     "message" : mess,
     "name" : namm,
     "node" : alias,
     "hops" : "0"
-  }
+  };
   newMsgs.message = contento;
 
-  localStorage.setItem( 'outbox', JSON.stringify(newMsgs) ); 
-  updateOutboxView();
+  localStorage.setItem( 'outbox', JSON.stringify(newMsgs) );
   checkOutbox();
   document.getElementById('message').value = '';
 
+  showOverview();
   return false;
-}
+};
 
 function checkOutbox() {
         var outStr = localStorage.getItem( 'outbox' );
@@ -148,24 +139,6 @@ function removeOutboxItem( timestamp ) {
   }
   var newOutStr = lines.join('\n');
   localStorage.setItem('outbox', newOutStr);
-  updateOutboxView();
-}
-function updateOutboxView() {
-  var contentString = '';
-  var outStr = localStorage.getItem( 'outbox' ) || '';
-  var lines = outStr.split( /\n/ );
-  for ( var i in lines ) {
-    if ( lines[ i ].length === 0 ) {
-      continue;
-    }
-               var obj = JSON.parse(lines[i]);
-                var ts = obj.message.time;
-                delete obj.message.time;
-                var msg = JSON.stringify(obj.message);
-
-    contentString += '<li><b>' + ts + ' </b>' + msg + '</li>';
-  }
-  document.getElementById( 'outbox' ).innerHTML = contentString;
 }
 
 /*
