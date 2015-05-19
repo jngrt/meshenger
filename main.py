@@ -31,6 +31,7 @@ class Meshenger:
       logger.info('Making message directory')
 
     self.init_index()
+    self.make_alias()
 
     try:
       d = threading.Thread(target=self.discover)
@@ -70,7 +71,7 @@ class Meshenger:
 
         for device in self.devices.keys():
           nodehash = self.hasj(device)
-	  nodepath = os.path.join(os.path.abspath('nodes'), nodehash)
+          nodepath = os.path.join(os.path.abspath('nodes'), nodehash)
           nodeupdatepath = os.path.join(nodepath, 'lastupdate')
 
           logger.info('Checking age of foreign node index')
@@ -179,9 +180,9 @@ Initialize the index. Read from disk or create new.
 
   def build_index(self):
     """
-Make an index file of all the messages present on the node.
-Save the time of the last update.
-"""
+	Make an index file of all the messages present on the node.
+	Save the time of the last update.
+	"""
     logger.debug('build_index')
     current_index = os.listdir(self.msg_dir)
     if current_index != self.previous_index:
@@ -198,11 +199,24 @@ Save the time of the last update.
 
     self.previous_index = current_index
 
+  def make_alias(self):
+	"""
+	See if the node already has an alias (nickname) if not just use the IP-Hash
+	"""
+	if not os.path.exists('alias'):
+	  with open('alias','wb') as alias:
+		self.alias = self.own_hash
+		alias.write(self.own_hash)
+	else:
+	  self.alias = open('alias','rb').read().replace('\n','') #should we replace the newline?
+	  pass
+	logger.debug('Alias is "'+self.alias+'"')
+
 
   def get_index(self,ip, path):
     """
-Download the indices from other nodes.
-"""
+	Download the indices from other nodes.
+	"""
 
     os.system('wget http://['+ip+'%adhoc0]:'+self.serve_port+'/index -O '+os.path.join(path,'index'))
 

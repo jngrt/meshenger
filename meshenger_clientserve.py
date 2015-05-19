@@ -32,6 +32,15 @@ Serve index and messages
         self.wfile.write(meshenger.own_hash)
       else:
         self.send_error(404,'Id not yet available')
+    elif self.path == '/alias':
+      if meshenger and meshenger.alias:
+        self.send_response(200)
+        self.send_header('Content-type', 'text-html')
+        self.end_headers()
+        self.wfile.write(meshenger.alias)
+      else:
+        self.send_error(404,'Alias not yet available')
+    
     elif self.path == '/log':
       self.send_response(200)
       self.send_header('Content-type', 'text-html')

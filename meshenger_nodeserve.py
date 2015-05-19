@@ -38,6 +38,10 @@ Serve index and messages
     if self.path == '/index' or self.path.startswith( self.messageDir ):
       return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
+    if self.path == '/alias' or self.path.startswith( self.messageDir ):
+      return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+
+
     else:
       self.send_response(404)
       self.send_header('Content-type', 'text/html')

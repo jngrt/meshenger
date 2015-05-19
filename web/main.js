@@ -2,7 +2,7 @@ localStorage.clear();
 
 
 //These need to be obtained from the node
-var ownId, ownColor;
+var ownId, ownColor, ownAlias;
 
 /*
  * OUTBOX STUFF
@@ -19,11 +19,12 @@ document.getElementById('message-form').onsubmit = function(){
   var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
   var newMsgs = {};
   var ddata = new Date().getTime();
+  var alias = ownAlias //to do: build a check to see if ownAlias == ownId, if so, alias should become 'local'
   var contento = {
     "time" : ddata,
     "message" : mess,
     "name" : namm,
-    "node" : "local",
+    "node" : alias,
     "hops" : "0"
   }
   newMsgs.message = contento;
@@ -233,6 +234,7 @@ function downloadMessage(filename) {
   xhr.open( "GET", 'msg/'+filename, true);
   xhr.send();
 
+
 }
 function checkInbox() {
   var xhr = new XMLHttpRequest();
@@ -256,6 +258,17 @@ function getOwnId() {
   xhr.send();
 }
 
+function getOwnAlias() {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(){
+    if (xhr.readyState == 4 && xhr.status == 200){
+      ownAlias = xhr.responseText;
+    }
+  }
+  xhr.open( "GET", 'alias', true);
+  xhr.send();
+}
+
 
 /*
  * INIT
@@ -264,6 +277,9 @@ function getOwnId() {
 function update(){
   if ( !ownId ){
     getOwnId();
+  }
+  if ( !ownAlias){
+    getOwnAlias();
   }
   checkInbox();
   // also check for outbox items on interval,
