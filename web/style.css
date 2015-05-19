@@ -81,10 +81,10 @@ margin:10px;
   box-shadow:0 0 23px #bbb;
 }
 
-#back-button{
+.back-button{
   display:inline;
   float:left;
-  width:30%;
+  width:100%;
   -webkit-appearance: none;
   -moz-appearance: none;
   outline: none;
@@ -229,37 +229,16 @@ hr{
 }
 
 .photoBox {
+  width: 98%;
+  margin: 0 auto;
+  line-height: 40px;
   display: none;
   position: absolute;
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  height: 50%;
-  padding: 16px;
   background-color:#fff;
   z-index:1002;
   overflow: auto;
-
-
-
-  padding:30px;
-  
+  width: 100%;
   overflow: visible;
-  -moz-box-shadow:0 0 23px #bbb;
-  -webkit-box-shadow:0 0 23px #bbb;
-  box-shadow:0 0 23px #bbb;
-  -webkit-border-top-left-radius:123px;
-  -webkit-border-top-right-radius:123px;
-  -webkit-border-bottom-right-radius:123px;
-  -webkit-border-bottom-left-radius:123px;
-  -moz-border-radius-bottomright:123px;
-  -moz-border-radius-bottomleft:123px;
-  -moz-border-top-left-radius:123px;
-  -moz-border-top-right-radius:123px;
-  border-top-left-radius:123px;
-  border-top-right-radius:123px;
-  border-bottom-right-radius:123px;
-  border-bottom-left-radius:123px;
   background:#fff;
 }
 

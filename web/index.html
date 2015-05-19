@@ -12,7 +12,7 @@
   </head>
   <body>
   <div id="message-page">
-    <button id="message-back">Back</button>
+    <button id="message-back" class="back-button">Back</button><br><br>
     <form id="message-form" action="" accept-charset="utf-8">
       <textarea id="name" rows="1" placeholder="Your Name"></textarea>
       <textarea id="message" rows="2"  placeholder="Your Message"></textarea>
@@ -21,8 +21,8 @@
     </form>
   </div>
 
-  <div id="photo-page" class="photoBox">
-    <button id="photo-back">Back</button>
+  <div id="photo-page" class="photo-page">
+    <button id="photo-back" class="back-button">Back</button><br>
     <input id="fileInput" accept="image/*" capture="camera" type="file">
     <br>
     <p>
@@ -40,11 +40,11 @@
     <canvas id="canvas3" width="400" height="400"></canvas>
     <br>
 
-    <button id="rotLeft">Rotate left</button>
-    <button id="rotRight">Rotate right</button>
+    <button id="rot-left" class="back-button">Rotate left</button>
+    <button id="rot-right" class="back-button">Rotate right</button>
 
     <button id="submit-photo" class="photo-buttons">submit</button>
-    <button id="cancel-photo" class="photo-buttons">cancel</button>
+    
 
   </div>
 
