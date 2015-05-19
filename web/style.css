@@ -105,6 +105,78 @@ margin:10px;
 }
 
 
+.rot-left{
+  display:inline;
+  float:left;
+  width:50%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  display: block;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+}
+
+.rot-right{
+ // margin-right: 60px;
+  display:inline;
+  width:50%;
+  float:right;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  display: block;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+}
+
+
+.photo-buttons {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  width:100%;
+  display: block;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+
+}
+
+
+
 /* hide calculation canvases */
 #sourceImage{
   display: none;
@@ -240,31 +312,6 @@ hr{
   width: 100%;
   overflow: visible;
   background:#fff;
-}
-
-
-.photo-buttons {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  outline: none;
-  //border: 1px solid #bbb;
-  border:0;
-  -webkit-border-radius: 13px;
-  -moz-border-radius: 13px;
-  border-radius: 13px;
-  height:40px;
-  width:100%;
-  display: block;
-  font-family: inherit;
-  font-size: 20px;
-  font-weight:bold;
-  text-shadow: 0 0 23px #888;
-  background-color:#fff;
-
-  -moz-box-shadow:0 0 23px #bbb;
-  -webkit-box-shadow:0 0 23px #bbb;
-  box-shadow:0 0 23px #bbb;
-
 }
 
 
