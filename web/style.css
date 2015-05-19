@@ -219,6 +219,27 @@ margin:10px;
 
 }
 
+#name{
+    -webkit-appearance: none;
+  -moz-appearance: none;
+
+  display: block;
+  outline:none;
+  width: 98%;
+  margin: 0 auto;
+  line-height: 40px;
+  border:none;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  font-family: inherit;
+  font-size: 20px;
+
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+
+}
 
 #message-form .send-button {
   -webkit-appearance: none;
