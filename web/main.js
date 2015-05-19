@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function(){
     // necessary in case connection is lost and messages are not yet sent
     checkOutbox();
   }
-  
+
   document.getElementById('message-form').onsubmit = onSubmitMessage;
 
   //update everything to initialize
@@ -75,9 +75,9 @@ function onSubmitMessage(){
   var msg = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
   var namm =  document.getElementById('name').value || "anonymous";
   addOutboxItem( namm, msg );
-};
+}
 
-function addOutboxItem( name, message ){
+function addOutboxItem( namm, message ){
   var outStr = localStorage.getItem( 'outbox' ) || '';
   var newMsgs = {};
   var ddata = new Date().getTime();
@@ -87,7 +87,7 @@ function addOutboxItem( name, message ){
   }
   var contento = {
     "time" : ddata,
-    "message" : mess,
+    "message" : message,
     "name" : namm,
     "node" : alias,
     "hops" : "0"
@@ -158,7 +158,7 @@ function removeOutboxItem( timestamp ) {
 
 
 function updateInboxView() {
-var localStorageArray = new Array();
+var localStorageArray = [];
   var contentString = '';
 
   if (localStorage.length>0) {
@@ -184,7 +184,7 @@ var localStorageArray = new Array();
       };
     }
   }
-  orderStorage = localStorageArray.sort(function(a,b) { return b.time - a.time } );
+  orderStorage = localStorageArray.sort(function(a,b) { return b.time - a.time; } );
 
   for(var i in orderStorage) {
     if ( i.length === 0 || i === 'outbox' ) {
@@ -247,21 +247,21 @@ function onMessageDownload( msg, filename ) {
   updateInboxView();
 }
 function onIndex( index ) {
-        var lines = index.split( /\n/ );
-
-  for(var k in localStorage){
-    var l = 1;
-    for ( var i in lines ) {
-      var f = lines[i];
+  var lines = index.split( /\n/ );
+  var k,i,l,f;
+  for( k in localStorage){
+    l = 1;
+    for ( i in lines ) {
+      f = lines[i];
       if (f == k){ l = 0; }
     }
-  if (l == 1){
-  localStorage.removeItem(k);
+    if (l == 1){
+      localStorage.removeItem(k);
+    }
   }
-  }
-updateInboxView();
+  updateInboxView();
 
-  for ( var i in lines ) {
+  for ( i in lines ) {
     var fname = lines[i];
     if ( localStorage.getItem( fname ) === null ) {
       //localStorage.setItem( ts, lines[i].substr(lines[i].indexOf(' ')) );
@@ -305,14 +305,14 @@ function getOwnId() {
 }
 
 function getOwnAlias() {
- var xhr = new XMLHttpRequest();
- xhr.onreadystatechange = function(){
- if (xhr.readyState == 4 && xhr.status == 200){
- ownAlias = xhr.responseText;
- }
- }
- xhr.open( "GET", 'alias', true);
- xhr.send();
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(){
+    if (xhr.readyState == 4 && xhr.status == 200){
+      ownAlias = xhr.responseText;
+    }
+  };
+  xhr.open( "GET", 'alias', true);
+  xhr.send();
 }
 
 /*
@@ -438,7 +438,7 @@ function onImageLoad() {
     drawRotated();
 }
 
-function onRotateRight(){ 
+function onRotateRight(){
   rotation += 90;
   drawRotated();
 }
@@ -482,7 +482,7 @@ function monochrome(imageData, threshold, type){
   // Greyscale luminance (sets r pixels to luminance of rgb)
   for (var i = 0; i <= imageDataLength; i += 4) {
     imageData.data[i] = Math.floor(lumR[imageData.data[i]] + lumG[imageData.data[i+1]] + lumB[imageData.data[i+2]]);
-  
+
 
   }
   var w = imageData.width;
@@ -526,24 +526,23 @@ function monochrome(imageData, threshold, type){
     // Set g and b pixels equal to r
     imageData.data[currentPixel + 1] = imageData.data[currentPixel + 2] = imageData.data[currentPixel];
   }
-    
-    // Alpha: make white pixels transparent!
-    var newColor = {r:0,g:0,b:0, a:0};
+  // Alpha: make white pixels transparent!
+  var newColor = {r:0,g:0,b:0, a:0};
 
-    for (var i = 0, n = imageData.data.length; i <n; i += 4) {
-    var r = imageData.data[i],
-            g = imageData.data[i+1],
-            b = imageData.data[i+2];
+  for ( i = 0, n = imageData.data.length; i <n; i += 4) {
+  var r = imageData.data[i],
+          g = imageData.data[i+1],
+          b = imageData.data[i+2];
 
-        // If its white, or close to white then change it
-        if(r >=200 && g >= 200 && b >= 200){ 
-            // Change the white to whatever.
-            imageData.data[i] = newColor.r;
-            imageData.data[i+1] = newColor.g;
-            imageData.data[i+2] = newColor.b;
-            imageData.data[i+3] = newColor.a;
-        }
-     }
+      // If its white, or close to white then change it
+      if(r >=200 && g >= 200 && b >= 200){
+          // Change the white to whatever.
+          imageData.data[i] = newColor.r;
+          imageData.data[i+1] = newColor.g;
+          imageData.data[i+2] = newColor.b;
+          imageData.data[i+3] = newColor.a;
+      }
+   }
 
   return imageData;
 }
