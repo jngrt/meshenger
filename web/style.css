@@ -81,6 +81,29 @@ margin:10px;
   box-shadow:0 0 23px #bbb;
 }
 
+#back-button{
+  display:inline;
+  float:left;
+  width:30%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border:0;
+  -webkit-border-radius: 13px;
+  -moz-border-radius: 13px;
+  border-radius: 13px;
+  height:40px;
+  display: block;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight:bold;
+  text-shadow: 0 0 23px #888;
+  background-color:#fff;
+  -moz-box-shadow:0 0 23px #bbb;
+  -webkit-box-shadow:0 0 23px #bbb;
+  box-shadow:0 0 23px #bbb;
+}
+
 
 /* hide calculation canvases */
 #sourceImage{
