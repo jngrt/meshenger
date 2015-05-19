@@ -5,6 +5,65 @@ localStorage.clear();
 var ownId, ownColor, ownAlias;
 
 /*
+ * INIT
+ */
+
+document.addEventListener('DOMContentLoaded', function(){
+
+  function update(){
+    if ( !ownId ){
+      getOwnId();
+    }
+    if ( !ownAlias){
+   getOwnAlias();
+    }
+    checkInbox();
+    // also check for outbox items on interval,
+    // necessary in case connection is lost and messages are not yet sent
+    checkOutbox();
+  }
+
+  //update everything to initialize
+  updateInboxView();
+  updateOutboxView();
+  update();
+
+  //check for new messages every 7 seconds
+  window.setInterval( update, 7000 );
+
+  addButtonListeners();
+});
+
+/*
+ * STATE CHANGES
+ */
+
+function addButtonListeners(){
+  document.getElementById('new-photo').onclick = onNewPhoto;
+  document.getElementById('new-message').onclick = onNewMessage;
+  document.getElementById('message-back').onclick = onBack;
+  document.getElementById('photo-back').onclick = onBack;
+}
+
+function onNewPhoto(){
+  document.getElementById('photo-page').style.display = "block";
+  document.getElementById('overview-page').style.display = "none";
+  document.getElementById('message-page').style.display = "none";
+}
+
+function onNewMessage(){
+  document.getElementById('photo-page').style.display = "none";
+  document.getElementById('overview-page').style.display = "none";
+  document.getElementById('message-page').style.display = "block";
+}
+
+function onBack(){
+  document.getElementById('photo-page').style.display = "none";
+  document.getElementById('overview-page').style.display = "block";
+  document.getElementById('message-page').style.display = "none";
+}
+
+/*
  * OUTBOX STUFF
  */
 document.getElementById('message-form').onsubmit = function(){
@@ -296,10 +355,6 @@ document.addEventListener('DOMContentLoaded', function(){
     initCanvas(context2);
     initCanvas(context3);
 
- 
-
-
-
     fileInput.onchange = onFileInputChange;
 
     document.getElementById('rotLeft').onclick = onRotateLeft;
@@ -501,30 +556,3 @@ function monochrome(imageData, threshold, type){
 
   return imageData;
 }
-
-
-
-/*
- * INIT
- */
-
-function update(){
-  if ( !ownId ){
-    getOwnId();
-  }
-  if ( !ownAlias){
- getOwnAlias();
-  }
-  checkInbox();
-  // also check for outbox items on interval,
-  // necessary in case connection is lost and messages are not yet sent
-  checkOutbox();
-}
-
-//update everything to initialize
-updateInboxView();
-updateOutboxView();
-update();
-
-//check for new messages every 7 seconds
-window.setInterval( update, 7000 );
