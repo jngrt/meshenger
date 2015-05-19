@@ -31,14 +31,18 @@ document.addEventListener('DOMContentLoaded', function(){
   //check for new messages every 7 seconds
   window.setInterval( update, 7000 );
 
-  addButtonListeners();
+  initState();
 });
 
 /*
  * STATE CHANGES
  */
 
-function addButtonListeners(){
+function initState(){
+  document.getElementById('photo-page').style.display = "none";
+  document.getElementById('overview-page').style.display = "block";
+  document.getElementById('message-page').style.display = "none";
+
   document.getElementById('new-photo').onclick = onNewPhoto;
   document.getElementById('new-message').onclick = onNewMessage;
   document.getElementById('message-back').onclick = onBack;
