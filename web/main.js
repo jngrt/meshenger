@@ -73,8 +73,12 @@ function showOverview(){
  */
 function onSubmitMessage(){
   var msg = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
-  var namm =  document.getElementById('name').value || "anonymous";
+  var namm =  document.getElementById('name').value;
+  if ( !namm || namm === "" ) {
+   namm = "anonymous";
+  }
   addOutboxItem( namm, msg );
+  return false;
 }
 
 function addOutboxItem( namm, message ){
@@ -99,7 +103,6 @@ function addOutboxItem( namm, message ){
   document.getElementById('message').value = '';
 
   showOverview();
-  return false;
 }
 
 function checkOutbox() {
@@ -195,11 +198,31 @@ var localStorageArray = [];
     contentString += '<li><div class="message-block" style="background-color:'+color+'">'+
       '<div class="date-sender">On ' + datereadable +
       ' <b>' + orderStorage[i].user +'</b> wrote:</div>' +
-      '<div class="message-text">' + orderStorage[i].message + '</div>' +
+      '<div class="message-text">' + parseEmoticons( orderStorage[i].message ) + '</div>' +
       ' <span class="node '+orderStorage[i].node+'">from '+orderStorage[i].node + '</span>' +
       ' <span class="hops '+orderStorage[i].hops+'">via '+orderStorage[i].hops+' nodes</span></div></li>';
   }
   document.getElementById( 'inbox' ).innerHTML = contentString;
+}
+function parseEmoticons( inputStr ){
+  //if ( inputStr.indexOf( '<img' ) > -1 ) {
+  //  return inputStr;
+  //}
+
+  var emoticons = [
+    {
+      text: ':)',
+      image: '1.png'
+    },
+    {
+      text:';)',
+      image: '2.png'
+    }
+  ];
+  for ( var i = 0; i < emoticons.length; i++ ){
+    inputStr = inputStr.split(emoticons[i].text).join('<img class="emo" src="/web/emoticons/'+emoticons[i].image+'">');
+  }
+  return inputStr;
 }
 function getReadableDate( date ) {
   var day = date.getDate();
@@ -354,28 +377,19 @@ function initPhotoStuff(){
 
 
 function submitImage(){
-
-    // convert canvas to html/base64 image
     var image = new Image(); //create new image holder
-    image.id = "outputImage"; //id it
 
     var canvas = document.getElementById('canvas3'); // choose canvas element to convert
     var dataURL = canvas.toDataURL(); // convert cabvas to data url we can handle
     image.src = dataURL;
-    //var outputImg = document.createElement("img"); // create img tag
-    //outputImg.src = dataURL; // assign dataurl to image tag 'src' option
-    //document.body.appendChild(outputImg); // append img to body (to be assigned to place holder div)
+    image.className = 'photo-message';
 
-    // append data to text area...not working yet..
-    //var photo = document.getElementById('message'); // add data url to message field... not working yet
-    //outputImg.src = "<img src='"+ outputImg.src; +"'/>" // construct image tag + img data...
-        //photo += outputImg.src;
-    //photo.innerHTML += outputImg.src;
-
-    //sendMessage( new Date().getTime(), dataURL );
-    //sendMessage( new Date().getTime(), "random "+Math.random()*1000 );
-    var namm = document.getElementById('photo-name').value || "anonymous";
+    var namm = document.getElementById('photo-name').value;
+    if( !namm || namm == "" ){
+      namm = "anonymous";
+    }
     addOutboxItem( namm, image.outerHTML );
+
     showOverview();
     return false;
 }
@@ -386,11 +400,11 @@ function initCanvas(context){
     context.fill();
     context.beginPath();
     context.rect(0,0, imgDim, imgDim);
-    context.fillStyle = 'yellow';
+    context.fillStyle = 'white';
     context.fill();
-    context.lineWidth = 7;
-    context.strokeStyle = 'black';
-    context.stroke();
+    // context.lineWidth = 7;
+    // context.strokeStyle = 'black';
+    // context.stroke();
 }
 
 // create file reader
