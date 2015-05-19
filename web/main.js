@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function(){
     // necessary in case connection is lost and messages are not yet sent
     checkOutbox();
   }
+  
+  document.getElementById('message-form').onsubmit = onSubmitMessage;
 
   //update everything to initialize
   updateInboxView();
@@ -69,13 +71,20 @@ function showOverview(){
 /*
  * OUTBOX STUFF
  */
-document.getElementById('message-form').onsubmit = function(){
-  var outStr = localStorage.getItem( 'outbox' ) || '';
+function onSubmitMessage(){
+  var msg = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
   var namm =  document.getElementById('name').value || "anonymous";
-  var mess = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
+  addOutboxItem( namm, msg );
+};
+
+function addOutboxItem( name, message ){
+  var outStr = localStorage.getItem( 'outbox' ) || '';
   var newMsgs = {};
   var ddata = new Date().getTime();
-  var alias = ownAlias;//to do: build a check to see if ownAlias == ownId, if so, alias should become 'local'
+  var alias = ownAlias;
+  if ( alias === ownId ) {
+    alias = "local";
+  }
   var contento = {
     "time" : ddata,
     "message" : mess,
@@ -91,7 +100,7 @@ document.getElementById('message-form').onsubmit = function(){
 
   showOverview();
   return false;
-};
+}
 
 function checkOutbox() {
         var outStr = localStorage.getItem( 'outbox' );
@@ -268,7 +277,7 @@ function downloadMessage(filename) {
     if (xhr.readyState == 4 && xhr.status == 200){
       onMessageDownload( xhr.responseText, filename );
     }
-  }
+  };
   xhr.open( "GET", 'msg/'+filename, true);
   xhr.send();
 
@@ -279,7 +288,7 @@ function checkInbox() {
     if (xhr.readyState == 4 && xhr.status == 200){
       onIndex( xhr.responseText );
     }
-  }
+  };
   xhr.open( "GET", 'index', true);
   xhr.send();
 }
@@ -290,7 +299,7 @@ function getOwnId() {
       ownId = xhr.responseText;
       ownColor = getNodeColor( ownId );
     }
-  }
+  };
   xhr.open( "GET", 'id', true);
   xhr.send();
 }
@@ -309,6 +318,7 @@ function getOwnAlias() {
 /*
  * PHOTO STUFF
  */
+var imgDim = 200;
 var canvas1;
 var context1;
 var canvas2;
@@ -351,29 +361,31 @@ function submitImage(){
 
     var canvas = document.getElementById('canvas3'); // choose canvas element to convert
     var dataURL = canvas.toDataURL(); // convert cabvas to data url we can handle
-
-    var outputImg = document.createElement("img"); // create img tag
-    outputImg.src = dataURL; // assign dataurl to image tag 'src' option
+    image.src = dataURL;
+    //var outputImg = document.createElement("img"); // create img tag
+    //outputImg.src = dataURL; // assign dataurl to image tag 'src' option
     //document.body.appendChild(outputImg); // append img to body (to be assigned to place holder div)
 
     // append data to text area...not working yet..
-    var photo = document.getElementById('message'); // add data url to message field... not working yet
+    //var photo = document.getElementById('message'); // add data url to message field... not working yet
     //outputImg.src = "<img src='"+ outputImg.src; +"'/>" // construct image tag + img data...
         //photo += outputImg.src;
-    photo.innerHTML += outputImg.src;
+    //photo.innerHTML += outputImg.src;
 
-    sendMessage( new Date().getTime(), "test"); //<< breaks vereything ;) and is  an bad idea: TODO: append data stringto message field, or url whatever and preview it locally (append to body) before submitting, but textarea is refreshing or something ugh...aka find clean solution, add url parameter instead of dirty innerhtml hacking
-//TEST INNNETHTML ADD TO TEXATAREA QUICKYYYYY
-
-    console.log(photo.innerHTML);
+    //sendMessage( new Date().getTime(), dataURL );
+    //sendMessage( new Date().getTime(), "random "+Math.random()*1000 );
+    var namm = document.getElementById('photo-name').value || "anonymous";
+    addOutboxItem( namm, image.outerHTML );
+    showOverview();
+    return false;
 }
 
 function initCanvas(context){
     // Debug filling
     context.fillStyle ="#dbbd7a";
-    context.fill()
+    context.fill();
     context.beginPath();
-    context.rect(0,0, 400, 400);
+    context.rect(0,0, imgDim, imgDim);
     context.fillStyle = 'yellow';
     context.fill();
     context.lineWidth = 7;
@@ -412,13 +424,13 @@ function onImageLoad() {
     var xOffset = 0;
     var yOffset = 0;
     if ( imgObj.width > imgObj.height ) {
-      h = 400;
-      w = 400 * imgObj.width / imgObj.height;
-      xOffset = (400 - w) / 2;
+      h = imgDim;
+      w = imgDim * imgObj.width / imgObj.height;
+      xOffset = (imgDim - w) / 2;
     } else {
-      w = 400;
-      h = 400 * imgObj.height / imgObj.width;
-      yOffset = (400 - h) / 2;
+      w = imgDim;
+      h = imgDim * imgObj.height / imgObj.width;
+      yOffset = (imgDim - h) / 2;
     }
     context1.drawImage(imgObj, xOffset, yOffset, w, h);
     var imageData  = context1.getImageData( 0, 0, canvas1.width, canvas1.height);
