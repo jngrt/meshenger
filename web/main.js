@@ -50,6 +50,7 @@ function showNewPhoto(){
   document.getElementById('photo-page').style.display = "block";
   document.getElementById('overview-page').style.display = "none";
   document.getElementById('message-page').style.display = "none";
+  document.getElementById('fileInput').click();
 }
 
 function showNewMessage(){
