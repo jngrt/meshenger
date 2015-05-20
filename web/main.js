@@ -73,6 +73,9 @@ function showOverview(){
  */
 function onSubmitMessage(){
   var msg = document.getElementById('message').value.replace(/\r?\n/g, "<br />");
+  if ( !msg || msg === "" ) { /* prevent sending of empty messages */
+   return false;
+  }
   var namm =  document.getElementById('name').value;
   if ( !namm || namm === "" ) {
    namm = "anonymous";
@@ -383,6 +386,9 @@ function submitImage(){
     var dataURL = canvas.toDataURL(); // convert cabvas to data url we can handle
     image.src = dataURL;
     image.className = 'photo-message';
+    if ( !image.src || image.src === "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAACEUlEQVR4nO3TMQEAIAzAsPk3DQrWF45EQZ/OAVbzOgB+ZhAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBYBAIBoFgEAgGgWAQCAaBcAEODrNzcVUZ+gAAAABJRU5ErkJggg==" ) { /* prevent sending of empty messages (data url of blank, thus white, canvas)*/
+      return false;
+    }
 
     var namm = document.getElementById('photo-name').value;
     if( !namm || namm == "" ){
