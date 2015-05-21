@@ -80,7 +80,7 @@ function onSubmitMessage(){
   if ( !namm || namm === "" ) {
    namm = "anonymous";
   }
-  addOutboxItem( namm, msg );
+  addOutboxItem( namm, "<p class='text-message'>"+msg+"</p>" );
   return false;
 }
 
@@ -89,6 +89,7 @@ function addOutboxItem( namm, message ){
   var newMsgs = {};
   var ddata = new Date().getTime();
   var alias = ownAlias;
+  
   var contento = {
     "time" : ddata,
     "message" : message,
