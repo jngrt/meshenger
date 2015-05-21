@@ -8,13 +8,15 @@ logging.config.fileConfig('pylog.conf')
 logger = logging.getLogger('meshenger'+'.main')
 
 class Meshenger:
-  devices = {} #the dictionary of all the nodes this this node has seen
+  devices = {} #the dictionary of all the nodes this this node has seen. each ip-entry has a tuple of 'foreign index update time' and time when last seen
+  devices_old =  {}
   serve_port = "13338"
   announce_port = 13337
   #own_ip = "0.0.0.0"
   msg_dir = os.path.relpath('msg/')
   exitapp = False #to kill all threads on
   index_last_update = str(int(time.time()))
+  node_expiry = 15 #the time to wait before removing a node form the discovered nodelist
 
   def __init__(self):
 
@@ -92,13 +94,24 @@ class Meshenger:
             self.build_index()
           self.node_timestamp(device)
 
+      self.devices_old = dict(self.devices)
+
+      #check to see if a node has been missing for a while, if so remove it from self.devices
+      for device in self.devices_old.keys(): 
+        update_time = int(self.devices[device][1])
+        time_delta = int(time.time())- update_time
+        if time_delta >= self.node_expiry:
+          logger.info('Node '+device+' missing for '+str(self.node_expiry)+' seconds. Removing from list')
+          del self.devices[device]
+
       time.sleep(5) #free process or ctrl+c
+
 
   def node_timestamp(self, ip):
       nodepath = os.path.abspath(os.path.join('nodes', self.hasj(ip)))
       updatepath = os.path.join(nodepath, 'lastupdate')
       with open(updatepath, 'wb') as lastupdate:
-        lastupdate.write(self.devices[ip])
+        lastupdate.write(self.devices[ip][0])
       #return updatepath
 
 
@@ -128,19 +141,19 @@ Discover other devices by listening to the Meshenger announce port
     while not self.exitapp:
       result = select.select([s],[],[])[0][0].recvfrom(bufferSize)
       ip = result[1][0]
-      logger.info('%s %s', ip, "*"*45)
+      #logger.debug('%s %s', ip, 'discovered')
       node_path = os.path.join(os.path.abspath('nodes'), self.hasj(ip))
-
+      announce_time = str(int(time.time()))
       if not os.path.exists(node_path) and ip != self.own_ip: 
         #loop for first time
         self.ip_to_hash_path(ip) #make a folder /nodes/hash
-        self.devices[ip] = result[0]
+        self.devices[ip] = result[0], announce_time
         #self.node_timestamp(ip) #make a local copy of the timestamp in /nodes/hash/updatetimestamp
         logger.info('New node %s', ip)
 
       elif os.path.exists(node_path) and ip != self.own_ip:
         logger.info('Known node %s', ip)
-        self.devices[ip] = result[0]
+        self.devices[ip] = result[0], announce_time
 
 
       time.sleep(1)
