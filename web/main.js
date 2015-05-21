@@ -201,7 +201,7 @@ var localStorageArray = [];
     var color = getNodeColor( orderStorage[i].node );
     contentString += '<li><div class="message-block" style="background-color:'+color+'">'+
       '<div class="date-sender">On ' + datereadable +
-      ' <b>' + orderStorage[i].user +'</b> wrote:</div>' +
+      ' <b>' + parseEmoticons(orderStorage[i].user) +'</b> wrote:</div>' +
       '<div class="message-text">' + parseEmoticons( orderStorage[i].message ) + '</div>' + //parseEmoticons is found in emoji.js
       ' <div class="nodehops"><div class="node '+orderStorage[i].node+'">from '+orderStorage[i].alias + '</div>' +
       ' <div class="hops '+orderStorage[i].hops+'">via '+orderStorage[i].hops+' nodes</div></div></div></li>';

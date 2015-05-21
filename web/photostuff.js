@@ -51,7 +51,7 @@ function submitImage(){
     if( !namm || namm == "" ){
       namm = "anonymous";
     }
-    addOutboxItem( namm, image.outerHTML );
+    addOutboxItem( parseEmoticons(namm), image.outerHTML );
 
     showOverview();
     return false;
