@@ -89,9 +89,6 @@ function addOutboxItem( namm, message ){
   var newMsgs = {};
   var ddata = new Date().getTime();
   var alias = ownAlias;
-  if ( alias === ownId ) {
-    alias = "local";
-  }
   var contento = {
     "time" : ddata,
     "message" : message,
