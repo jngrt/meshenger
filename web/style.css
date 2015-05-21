@@ -13,6 +13,7 @@ body{
   padding:20px;
 }
 
+
 /* resize images on mobile */
 @media all and (max-width: 768px) {
 
@@ -50,30 +51,29 @@ body{
   }
 
   .nodehops{
-  position: absolute;
-  float: right;
-  right:20px;
-  text-align: right;
-  padding: 0px;
-  margin-top:-60px;
-  -moz-box-shadow:0 0 23px #bbb;
-  -webkit-box-shadow:0 0 23px #bbb;
-  box-shadow:0 0 23px #bbb;
-  -webkit-border-top-left-radius:123px;
-  -webkit-border-top-right-radius:123px;
-  -webkit-border-bottom-right-radius:123px;
-  -webkit-border-bottom-left-radius:123px;
-  -moz-border-radius-bottomright:123px;
-  -moz-border-radius-bottomleft:123px;
-  -moz-border-top-left-radius:123px;
-  -moz-border-top-right-radius:123px;
-  border-top-left-radius:123px;
-  border-top-right-radius:123px;
-  border-bottom-right-radius:123px;
-  border-bottom-left-radius:123px;
-  background:#fff;
-
-}
+    position: absolute;
+    float: right;
+    right:20px;
+    text-align: right;
+    padding: 0px;
+    margin-top:-50px;
+    -moz-box-shadow:0 0 23px #bbb;
+    -webkit-box-shadow:0 0 23px #bbb;
+    box-shadow:0 0 23px #bbb;
+    -webkit-border-top-left-radius:123px;
+    -webkit-border-top-right-radius:123px;
+    -webkit-border-bottom-right-radius:123px;
+    -webkit-border-bottom-left-radius:123px;
+    -moz-border-radius-bottomright:123px;
+    -moz-border-radius-bottomleft:123px;
+    -moz-border-top-left-radius:123px;
+    -moz-border-top-right-radius:123px;
+    border-top-left-radius:123px;
+    border-top-right-radius:123px;
+    border-bottom-right-radius:123px;
+    border-bottom-left-radius:123px;
+    background:#fff;
+  }
 
 }
 
@@ -150,7 +150,7 @@ img.photo-message{
   border-bottom-left-radius:123px;
   background:#fff;
 
-}
+  }
 }
 
 
@@ -161,15 +161,15 @@ img.emo {
 }
 
 p.text-message{
-padding: 30px;
-padding-top: 40px;
+  padding: 30px;
+  padding-top: 50px;
 }
 
 #input-footer{
-position: fixed;
-top:0px;
-width:100%;
-margin:10px;
+  position: fixed;
+  top:0px;
+  width:100%;
+  margin:10px;
 }
 
 
@@ -437,7 +437,7 @@ hr{
   margin: 0;
 }
 .messages .message-block {
-  margin:30px;
+  margin-top:30px;
   word-wrap:break-word;
   overflow: visible;
   -moz-box-shadow:0 0 23px #bbb;
@@ -509,6 +509,7 @@ hr{
   border-bottom-left-radius:123px;
   background:#fff;
 }
+
 #outbox{
   display:none;
 }
