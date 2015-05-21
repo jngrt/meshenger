@@ -122,10 +122,13 @@ Announce the node's existance to other nodes
 """
     logger.info('Announcing')
     while not self.exitapp:
-      sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-      sock.sendto(self.index_last_update, ("ff02::1", self.announce_port))
-      sock.close()
-      time.sleep(5)
+      try:
+        sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        sock.sendto(self.index_last_update, ("ff02::1", self.announce_port))
+        #sock.close()
+        time.sleep(5)
+      except:
+        logger.warning('Failed to announce myself!')
 
   def discover(self):
     """
