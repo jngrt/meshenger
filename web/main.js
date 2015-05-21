@@ -203,8 +203,8 @@ var localStorageArray = [];
       '<div class="date-sender">On ' + datereadable +
       ' <b>' + orderStorage[i].user +'</b> wrote:</div>' +
       '<div class="message-text">' + parseEmoticons( orderStorage[i].message ) + '</div>' + //parseEmoticons is found in emoji.js
-      ' <span class="node '+orderStorage[i].node+'">from '+orderStorage[i].alias + '</span>' +
-      ' <span class="hops '+orderStorage[i].hops+'">via '+orderStorage[i].hops+' nodes</span></div></li>';
+      ' <div class="nodehops"><div class="node '+orderStorage[i].node+'">from '+orderStorage[i].alias + '</div>' +
+      ' <div class="hops '+orderStorage[i].hops+'">via '+orderStorage[i].hops+' nodes</div></div></div></li>';
   }
   document.getElementById( 'inbox' ).innerHTML = contentString;
 }
