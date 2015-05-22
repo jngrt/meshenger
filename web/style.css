@@ -156,8 +156,11 @@ img.photo-message{
 
 
 img.emo {
-  width: 22px;
-  height: 22px;
+}
+
+.date-sender .emo {
+  width:22px;
+  height:22px;
 }
 
 p.text-message{
