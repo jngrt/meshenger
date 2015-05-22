@@ -32,6 +32,10 @@ function parseEmoticons( inputStr ){
     {
       text:';)',
       image: '2.png'
+    },
+    {
+      text:':rock:',
+      image: '3.png'
     }
   ];
   for ( var i = 0; i < emoticons.length; i++ ){
