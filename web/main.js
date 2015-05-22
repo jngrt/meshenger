@@ -77,7 +77,7 @@ function onSubmitMessage(){
    return false;
   }
   var namm =  document.getElementById('name').value;
-  if ( !namm || namm === "" ) {
+  if ( !namm || namm === "" || namm.length > 20) { /* prevent too long usernames */
    namm = "anonymous";
   }
   addOutboxItem( namm, "<p class='text-message'>"+msg+"</p>" );
