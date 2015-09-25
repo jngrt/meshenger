@@ -1,4 +1,4 @@
-meshenger
+Meshenger
 =========
 
 Meshenger is a Forban-inspired messaging software used for a speculative broadcast communication project. The starting point is an electronic messaging system running on a wireless mesh network. The messages propagate through the network when devices that come in contact with each other synchronize their content. It is non-hierarchical, every node receives, relays and broadcasts messages.
@@ -34,7 +34,10 @@ Below you will find the manual configuration steps necessary to install Meshenge
 
 Read more [here](https://github.com/rscmbbng/meshenger/blob/master/lazyinstall/README.md)
  
- 
+To add: stop Luci from running! 
+`$ /etc/init.d/uhttpd disable`
+Saves a lot of resources!
+
 ### System configuration
 
 To use your router for Meshenger you're going to need to run the whole filesystem from a USB-Drive.
